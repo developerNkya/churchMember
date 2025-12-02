@@ -21,6 +21,10 @@ Route::prefix('member')->name('member.')->group(function () {
 
 // Admin routes
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/login', [AdminController::class, 'login'])->name('login');
+    Route::get('/login', [AdminController::class, 'loginPage'])->name('login');
     Route::post('/login', [AdminController::class, 'authenticate'])->name('authenticate');
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/logout', [AdminController::class, 'logout'])->name('logout');
+    Route::put('/member/{id}', [AdminController::class, 'update'])->name('update');
+    Route::delete('/member/{id}', [AdminController::class, 'destroy'])->name('destroy');
 });

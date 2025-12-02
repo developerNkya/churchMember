@@ -3,262 +3,499 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uingiaji wa Msimamizi - K.K.K.T DAYOSISI YA MASHARIKI NA PWANI</title>
+    <title>Ingia kama Msimamizi</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
         }
-        
+
         body {
+            background: linear-gradient(135deg, #eef2ff 0%, #e0f2fe 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
             padding: 20px;
         }
-        
-        .login-container {
-            max-width: 450px;
-            width: 100%;
-            background: white;
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .logo {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            color: white;
-            font-size: 32px;
-        }
-        
-        h1 {
-            color: #1e3a8a;
-            margin-bottom: 10px;
-            font-size: 1.8rem;
-        }
-        
-        .subtitle {
-            color: #64748b;
-            font-size: 1rem;
-        }
-        
-        .alert {
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
-        }
-        
-        .alert-danger {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #374151;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-        
-        .form-control.error {
-            border-color: #ef4444;
-        }
-        
-        .error-message {
-            color: #ef4444;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-        
-        .btn-login {
-            width: 100%;
-            padding: 14px;
-            background-color: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .btn-login:hover {
-            background-color: #2563eb;
-        }
-        
-        .btn-login:disabled {
-            background-color: #93c5fd;
-            cursor: not-allowed;
-        }
-        
+
         .back-link {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            color: #6b7280;
+            color: #2563eb;
             text-decoration: none;
-            margin-top: 25px;
-            transition: color 0.3s;
+            font-size: 14px;
+            margin-bottom: 24px;
+            transition: color 0.2s;
         }
-        
+
         .back-link:hover {
+            color: #1d4ed8;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 32px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-icon {
+            width: 64px;
+            height: 64px;
+            background: #e0e7ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .login-icon svg {
+            width: 32px;
+            height: 32px;
+            color: #4f46e5;
+        }
+
+        .login-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 500;
             color: #374151;
         }
-        
-        .loading {
-            display: inline-block;
+
+        .form-input {
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .submit-btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 8px;
+        }
+
+        .submit-btn:hover {
+            background: #4338ca;
+        }
+
+        .submit-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .demo-info {
+            margin-top: 24px;
+            padding: 16px;
+            background: #dbeafe;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .demo-info p {
+            font-size: 13px;
+            color: #1e40af;
+            line-height: 1.5;
+        }
+
+        .demo-code {
+            background: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #1e40af;
+            margin: 0 2px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast-success {
+            background: #10b981;
+        }
+
+        .toast-error {
+            background: #ef4444;
+        }
+
+        .toast-icon {
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
         }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
-        
-        @media (max-width: 768px) {
-            .login-container {
-                padding: 30px 25px;
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 24px;
             }
             
-            h1 {
-                font-size: 1.5rem;
+            .login-title {
+                font-size: 20px;
+            }
+        }
+
+        
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 32px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-icon {
+            width: 64px;
+            height: 64px;
+            background: #e0e7ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .login-icon svg {
+            width: 32px;
+            height: 32px;
+            color: #4f46e5;
+        }
+
+        .login-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-input {
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .submit-btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 8px;
+        }
+
+        .submit-btn:hover {
+            background: #4338ca;
+        }
+
+        .submit-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .demo-info {
+            margin-top: 24px;
+            padding: 16px;
+            background: #dbeafe;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .demo-info p {
+            font-size: 13px;
+            color: #1e40af;
+            line-height: 1.5;
+        }
+
+        .demo-code {
+            background: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #1e40af;
+            margin: 0 2px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast-success {
+            background: #10b981;
+        }
+
+        .toast-error {
+            background: #ef4444;
+        }
+
+        .toast-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 24px;
+            }
+            
+            .login-title {
+                font-size: 20px;
             }
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <div class="header">
-            <div class="logo">
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
-                </svg>
-            </div>
-            <h1>Uingiaji wa Msimamizi</h1>
-            <p class="subtitle">K.K.K.T DAYOSISI YA MASHARIKI NA PWANI</p>
-        </div>
-        
-        @if(session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
-            </div>
-        @endif
-        
-        @if($errors->any())
-            <div class="alert alert-danger">
-                <ul style="margin-left: 20px;">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-        
-        <form method="POST" action="{{ route('admin.authenticate') }}" id="loginForm">
-            @csrf
-            
-            <div class="form-group">
-                <label for="email">Barua Pepe</label>
-                <input type="email" id="email" name="email" class="form-control @error('email') error @enderror" 
-                       value="{{ old('email') }}" required autofocus>
-                @error('email')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-            
-            <div class="form-group">
-                <label for="password">Nenosiri</label>
-                <input type="password" id="password" name="password" class="form-control @error('password') error @enderror" required>
-                @error('password')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-            
-            <button type="submit" class="btn-login" id="loginBtn">
-                <span id="loginText">Ingia</span>
-                <span id="loadingSpinner" class="loading" style="display: none;"></span>
-            </button>
-        </form>
-        
-        <a href="{{ route('home') }}" class="back-link">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <a href="/" class="back-link">
+            <svg class="back-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M19 12H5M12 19l-7-7 7-7"/>
             </svg>
-            Rudi Kwenye Ukurasa Mkuu
+            Rudi Nyumbani
         </a>
+
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                </div>
+                <h1 class="login-title">Ingia kama Msimamizi</h1>
+                <p class="login-subtitle">Weka taarifa zako za kuingia</p>
+            </div>
+
+            <form class="login-form" id="loginForm" method="POST" action="{{ route('admin.authenticate') }}">
+                @csrf
+                <div class="form-group">
+                    <label for="username" class="form-label">Jina la Mtumiaji</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username"
+                        class="form-input @error('username') border-red-500 @enderror" 
+                        placeholder="admin" 
+                        value="{{ old('username') }}"
+                        required
+                    />
+                    @error('username')
+                        <span style="color: #ef4444; font-size: 12px;">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Neno la Siri</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password"
+                        class="form-input @error('password') border-red-500 @enderror" 
+                        placeholder="••••••••" 
+                        required
+                    />
+                    @error('password')
+                        <span style="color: #ef4444; font-size: 12px;">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Ingia
+                </button>
+            </form>
+
+            <div class="demo-info">
+                <p>
+                    <strong>Demo:</strong> Username: <code class="demo-code">admin</code>, Password: 
+                    <code class="demo-code">admin123</code>
+                </p>
+            </div>
+        </div>
     </div>
 
+    <!-- Toast Notifications -->
+    @if(session('success'))
+    <div id="successToast" class="toast toast-success" style="display: flex;">
+        <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+        {{ session('success') }}
+    </div>
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            const loginBtn = document.getElementById('loginBtn');
-            const loginText = document.getElementById('loginText');
-            const loadingSpinner = document.getElementById('loadingSpinner');
-            
-            // Show loading state
-            loginBtn.disabled = true;
-            loginText.textContent = 'Inaingiza...';
-            loadingSpinner.style.display = 'inline-block';
-            
-            // Validate form
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value.trim();
-            
-            if (!email || !password) {
-                e.preventDefault();
-                alert('Tafadhali jaza barua pepe na nenosiri.');
-                
-                // Reset button state
-                loginBtn.disabled = false;
-                loginText.textContent = 'Ingia';
-                loadingSpinner.style.display = 'none';
-            }
+        setTimeout(() => {
+            document.getElementById('successToast').style.display = 'none';
+        }, 3000);
+    </script>
+    @endif
+
+    @if(session('error'))
+    <div id="errorToast" class="toast toast-error" style="display: flex;">
+        <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+        {{ session('error') }}
+    </div>
+    <script>
+        setTimeout(() => {
+            document.getElementById('errorToast').style.display = 'none';
+        }, 3000);
+    </script>
+    @endif
+
+    <script>
+        // Simple loading state
+        document.getElementById('loginForm').addEventListener('submit', function() {
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Inaingia...';
         });
     </script>
 </body>
