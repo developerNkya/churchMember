@@ -496,25 +496,201 @@
                         type="text" 
                         name="search"
                         value="{{ request('search') }}"
-                        class="search-input" 
-                        placeholder="Tafuta kwa jina, simu, mtaa au kazi..."
-                    />
-                </div>
-                <button type="submit" style="display: none;">Search</button>
-                <button type="button" id="downloadAllBtn" class="download-btn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    Pakua PDF (Zote)
-                </button>
-            </form>
-            <div class="record-count">
-                Jumla: <strong>{{ $members->total() }}</strong> rekodi
+        <!-- Table -->
+        <div class="table-container">
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Jina</th>
+                            <th>Jinsi</th>
+                            <th>Simu</th>
+                            <th>Mtaa</th>
+                            <th>Kazi</th>
+                            <th>Tarehe</th>
+                            <th class="actions-cell">Vitendo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($members as $index => $member)
+                        <tr>
+                            <td>{{ $members->firstItem() + $index }}</td>
+                            <td>{{ $member->jina }}</td>
+                            <td>{{ $member->jinsi }}</td>
+                            <td>{{ $member->simu }}</td>
+                            <td>{{ $member->mtaa }}</td>
+                            <td>{{ $member->kazi }}</td>
+                            <td>{{ $member->created_at->format('d/m/Y') }}</td>
+                            <td class="actions-cell">
+                                <div class="actions-container">
+                                    <button class="action-btn" onclick="handleView(@js($member))" title="Angalia">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                    </button>
+                                    <button class="action-btn" onclick="handleEdit(@js($member))" title="Hariri">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                        </svg>
+                                    </button>
+                                    <button class="action-btn" onclick="downloadPDF(@js($member))" title="Pakua PDF">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="7 10 12 15 17 10"></polyline>
+                                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                                        </svg>
+                                    </button>
+                                    <button class="action-btn delete" onclick="handleDelete({{ $member->id }})" title="Futa">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M3 6h18"></path>
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                                            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="8" class="empty-state">Hakuna rekodi zilizopatikana</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            <div class="p-4">
+                {{ $members->links() }}
             </div>
         </div>
+    </main>
 
+    <!-- View Modal -->
+    <div id="viewModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Taarifa za Msharika</h2>
+            </div>
+            <div class="modal-body">
+                <div id="viewPhoto" class="photo-container" style="display: none;">
+                    <img id="memberPhoto" class="member-photo" alt="Member photo">
+                </div>
+                
+                <div id="viewContent">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="closeViewModal" class="btn-secondary">Funga</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Hariri Taarifa za Msharika</h2>
+            </div>
+            <div class="modal-body">
+                <form id="editForm" class="form-grid">
+                    @csrf
+                    @method('PUT')
+                    <div class="form-group">
+                        <label for="edit_jina" class="form-label">Jina la Msharika</label>
+                        <input type="text" id="edit_jina" name="jina" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_jinsi" class="form-label">Jinsi</label>
+                        <select id="edit_jinsi" name="jinsi" class="form-select" required>
+                            <option value="">Chagua</option>
+                            <option value="Me">Me</option>
+                            <option value="Ke">Ke</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_simu" class="form-label">Namba ya Simu</label>
+                        <input type="tel" id="edit_simu" name="simu" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_barua_pepe" class="form-label">Email</label>
+                        <input type="email" id="edit_barua_pepe" name="barua_pepe" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_mtaa" class="form-label">Mtaa/Jumuiya</label>
+                        <input type="text" id="edit_mtaa" name="mtaa" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_jina_eneo" class="form-label">Eneo</label>
+                        <input type="text" id="edit_jina_eneo" name="jina_eneo" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_kazi" class="form-label">Kazi</label>
+                        <input type="text" id="edit_kazi" name="kazi" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_mahali_kazi" class="form-label">Mahali pa Kazi</label>
+                        <input type="text" id="edit_mahali_kazi" name="mahali_kazi" class="form-input">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelEdit" class="btn-secondary">Ghairi</button>
+                <button id="saveEdit" class="btn-primary">Hifadhi Mabadiliko</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Form (Hidden) -->
+    <form id="deleteForm" method="POST" style="display: none;">
+        @csrf
+        @method('DELETE')
+    </form>
+
+    <!-- Toast Notifications -->
+    <div id="successToast" class="toast toast-success" style="display: {{ session('success') ? 'flex' : 'none' }}">
+        <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 13l4 4L19 7"></path>
+        </svg>
+        {{ session('success') }}
+    </div>
+    <div id="errorToast" class="toast toast-error" style="display: {{ session('error') ? 'flex' : 'none' }}">
+        <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+        {{ session('error') }}
+    </div>
+            <div class="header-title">
+                <h1>Ukurasa wa Usimamizi</h1>
+                <p>Simamia rekodi za washarika</p>
+            </div>
+            <a href="{{ route('admin.logout') }}" class="logout-btn">
+                <svg class="logout-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Toka
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Search and Actions -->
+        <div class="search-section">
+            <form action="{{ route('admin.dashboard') }}" method="GET" class="search-container">
+                <div class="search-box">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input 
+                        type="text" 
+                        name="search"
+                        value="{{ request('search') }}"
         <!-- Table -->
         <div class="table-container">
             <div class="table-wrapper">
@@ -757,14 +933,7 @@
             document.getElementById('edit_kazi').value = record.kazi || '';
             document.getElementById('edit_mahali_kazi').value = record.mahali_kazi || '';
             
-            // Set form action
-            // Note: The route is /admin/member/{id}
-            // We can construct it here
             const form = document.getElementById('editForm');
-            // We need to use a placeholder for ID and replace it, or just append if structure allows
-            // Better to use a data attribute or JS variable for the base URL if possible, 
-            // but for now hardcoding the pattern is acceptable given the context.
-            // Using a cleaner approach:
             form.onsubmit = function(e) {
                 e.preventDefault();
                 submitEdit(record.id);
@@ -778,7 +947,7 @@
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
             
-            fetch(\`/admin/member/\${id}\`, {
+            fetch(`/admin/member/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -810,9 +979,26 @@
         function handleDelete(id) {
             if (!confirm('Je, una uhakika unataka kufuta rekodi hii?')) return;
             
-            const form = document.getElementById('deleteForm');
-            form.action = \`/admin/member/\${id}\`;
-            form.submit();
+            fetch(`/admin/member/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast('Hitilafu imetokea.', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Hitilafu ya mtandao.', 'error');
+            });
         }
 
         function downloadPDF(record) {
@@ -836,19 +1022,19 @@
             
             doc.setFontSize(10);
             doc.setFont('helvetica', 'normal');
-            doc.text(\`Jina la Msharika: \${record.jina || 'N/A'}\`, 15, yPos);
+            doc.text(`Jina la Msharika: ${record.jina || 'N/A'}`, 15, yPos);
             yPos += 6;
-            doc.text(\`Jinsi: \${record.jinsi || 'N/A'}\`, 15, yPos);
+            doc.text(`Jinsi: ${record.jinsi || 'N/A'}`, 15, yPos);
             yPos += 6;
-            doc.text(\`Tarehe ya Kuzaliwa: \${record.tarehe_kuzaliwa || 'N/A'}\`, 15, yPos);
+            doc.text(`Tarehe ya Kuzaliwa: ${record.tarehe_kuzaliwa || 'N/A'}`, 15, yPos);
             yPos += 6;
-            doc.text(\`Mahali Ulipozaliwa: \${record.mahali_kuzaliwa || 'N/A'}\`, 15, yPos);
+            doc.text(`Mahali Ulipozaliwa: ${record.mahali_kuzaliwa || 'N/A'}`, 15, yPos);
             yPos += 6;
-            doc.text(\`Hali ya Ndoa: \${record.hali_ndoa || 'N/A'}\`, 15, yPos);
+            doc.text(`Hali ya Ndoa: ${record.hali_ndoa || 'N/A'}`, 15, yPos);
             yPos += 6;
             
             if (record.jina_mwenzi) {
-                doc.text(\`Jina la Mwenzi: \${record.jina_mwenzi}\`, 15, yPos);
+                doc.text(`Jina la Mwenzi: ${record.jina_mwenzi}`, 15, yPos);
                 yPos += 6;
             }
             
@@ -860,15 +1046,15 @@
             yPos += 8;
             
             doc.setFont('helvetica', 'normal');
-            doc.text(\`Simu: \${record.simu || 'N/A'}\`, 15, yPos);
+            doc.text(`Simu: ${record.simu || 'N/A'}`, 15, yPos);
             yPos += 6;
-            doc.text(\`Email: \${record.barua_pepe || 'N/A'}\`, 15, yPos);
+            doc.text(`Email: ${record.barua_pepe || 'N/A'}`, 15, yPos);
             yPos += 6;
-            doc.text(\`Mtaa/Jumuiya: \${record.mtaa || 'N/A'}\`, 15, yPos);
+            doc.text(`Mtaa/Jumuiya: ${record.mtaa || 'N/A'}`, 15, yPos);
             yPos += 6;
-            doc.text(\`Eneo: \${record.jina_eneo || 'N/A'}\`, 15, yPos);
+            doc.text(`Eneo: ${record.jina_eneo || 'N/A'}`, 15, yPos);
             yPos += 6;
-            doc.text(\`Namba ya Nyumba: \${record.namba_nyumba || 'N/A'}\`, 15, yPos);
+            doc.text(`Namba ya Nyumba: ${record.namba_nyumba || 'N/A'}`, 15, yPos);
             yPos += 9;
             
             // Section C
@@ -877,13 +1063,13 @@
             yPos += 8;
             
             doc.setFont('helvetica', 'normal');
-            doc.text(\`Kazi: \${record.kazi || 'N/A'}\`, 15, yPos);
+            doc.text(`Kazi: ${record.kazi || 'N/A'}`, 15, yPos);
             yPos += 6;
-            doc.text(\`Mahali pa Kazi: \${record.mahali_kazi || 'N/A'}\`, 15, yPos);
+            doc.text(`Mahali pa Kazi: ${record.mahali_kazi || 'N/A'}`, 15, yPos);
             yPos += 6;
-            doc.text(\`Elimu: \${record.elimu || 'N/A'}\`, 15, yPos);
+            doc.text(`Elimu: ${record.elimu || 'N/A'}`, 15, yPos);
             yPos += 6;
-            doc.text(\`Ujuzi: \${record.ujuzi || 'N/A'}\`, 15, yPos);
+            doc.text(`Ujuzi: ${record.ujuzi || 'N/A'}`, 15, yPos);
             yPos += 9;
             
             // Section D
@@ -892,68 +1078,18 @@
             yPos += 8;
             
             doc.setFont('helvetica', 'normal');
-            doc.text(\`Umebatizwa: \${record.batizwa || 'N/A'}\`, 15, yPos);
+            doc.text(`Umebatizwa: ${record.batizwa || 'N/A'}`, 15, yPos);
             yPos += 6;
-            doc.text(\`Kipaimara: \${record.kipaimara || 'N/A'}\`, 15, yPos);
+            doc.text(`Kipaimara: ${record.kipaimara || 'N/A'}`, 15, yPos);
             yPos += 6;
-            doc.text(\`Meza ya Bwana: \${record.meza_bwana || 'N/A'}\`, 15, yPos);
+            doc.text(`Meza ya Bwana: ${record.meza_bwana || 'N/A'}`, 15, yPos);
             
             // Footer
             doc.setFontSize(8);
-            doc.text(\`Tarehe ya Kujaza: \${new Date(record.created_at || Date.now()).toLocaleDateString('sw-TZ')}\`, 15, 285);
+            doc.text(`Tarehe ya Kujaza: ${new Date(record.created_at || Date.now()).toLocaleDateString('sw-TZ')}`, 15, 285);
             
-            doc.save(\`\${record.jina?.replace(/\s+/g, '_') || 'member'}_\${record.id}.pdf\`);
+            doc.save(`${record.jina?.replace(/\s+/g, '_') || 'member'}_${record.id}.pdf`);
             showToast('PDF imepakuliwa.', 'success');
-        }
-
-        function downloadAllPDF() {
-            // Note: This only downloads the current page's data because we are client-side.
-            // To download ALL data, we would need a server-side endpoint that returns all data or generates the PDF.
-            // For now, I'll use the data available in the view (current page).
-            // A better approach for "Download All" would be a separate route.
-            // But to keep it simple and consistent with the "no script" request (mostly), I'll just use what I have.
-            // Actually, I can pass all data if I wanted, but that's heavy.
-            // Let's just download the visible rows for now, or warn the user.
-            
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            doc.setFontSize(16);
-            doc.setFont('helvetica', 'bold');
-            doc.text('ORODHA YA WASHARIKA', 105, 15, { align: 'center' });
-            doc.setFontSize(12);
-            doc.text('K.K.K.T Jimbo la Kusini - Usharika wa Mji Mwema', 105, 22, { align: 'center' });
-            
-            // We need to scrape the table or use the @json($members) data (which is paginated).
-            // Using the JS object passed to the view would be cleaner if I had passed all of them, but I only passed paginated.
-            // So I'll scrape the table.
-            
-            doc.autoTable({
-                html: '.data-table',
-                startY: 30,
-                theme: 'grid',
-                styles: { fontSize: 9 },
-                headStyles: { fillColor: [79, 70, 229] },
-                columns: [
-                    { header: '#', dataKey: 'id' },
-                    { header: 'Jina', dataKey: 'jina' },
-                    { header: 'Jinsi', dataKey: 'jinsi' },
-                    { header: 'Simu', dataKey: 'simu' },
-                    { header: 'Mtaa', dataKey: 'mtaa' },
-                    { header: 'Kazi', dataKey: 'kazi' },
-                    { header: 'Tarehe', dataKey: 'tarehe' }
-                ],
-                didParseCell: function(data) {
-                    // Remove the actions column
-                    if (data.column.index === 7) {
-                        data.cell.styles.display = 'none';
-                    }
-                }
-            });
-            
-            const today = new Date().toISOString().split('T')[0];
-            doc.save(\`washarika_\${today}.pdf\`);
-            showToast('PDF ya rekodi (ukurasa huu) imepakuliwa.', 'success');
         }
 
         function showToast(message, type) {
