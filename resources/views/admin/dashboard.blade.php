@@ -1030,7 +1030,7 @@
         }
 
 
-        async function downloadPDF(record) {
+async function downloadPDF(record) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     
@@ -1055,6 +1055,43 @@
             const yearMatch = dateString.toString().match(/^\d{4}/);
             return yearMatch ? yearMatch[0] : '';
         }
+    };
+    
+    // Helper function to extract date only (YYYY-MM-DD) from date string
+    const extractDateOnly = (dateString) => {
+        if (!dateString) return '';
+        
+        try {
+            // Handle ISO date format (2016-04-17T00:00:00.000000Z)
+            if (typeof dateString === 'string') {
+                // Try to extract YYYY-MM-DD from ISO format
+                const isoMatch = dateString.match(/^(\d{4}-\d{2}-\d{2})T/);
+                if (isoMatch) {
+                    return isoMatch[1]; // Returns "2016-04-17"
+                }
+                
+                // Try to extract YYYY-MM-DD from any format
+                const dateMatch = dateString.match(/(\d{4}-\d{2}-\d{2})/);
+                if (dateMatch) {
+                    return dateMatch[1]; // Returns "2016-04-17"
+                }
+                
+                // Try to parse and format using Date object
+                const date = new Date(dateString);
+                if (!isNaN(date.getTime())) {
+                    // Format as YYYY-MM-DD
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                }
+            }
+        } catch (e) {
+            console.error("Error parsing date:", e);
+        }
+        
+        // Return original if parsing fails
+        return dateString.toString();
     };
     
     // Function to check and add new page if needed
@@ -1093,9 +1130,28 @@
         doc.text(`${label}:`, xPos, yPos);
         doc.setFont('helvetica', 'normal');
         
+        // Format date fields to show only date part (YYYY-MM-DD)
+        let displayValue = value.toString();
+        
+        // Check if this is a date field
+        const dateFields = [
+            'tarehe_kuzaliwa',
+            'tarehe_ndoa',
+            'tarehe_kipaimara',
+            'tarehe'
+        ];
+        
+        // Extract field name from label (approximate)
+        const fieldName = label.toLowerCase().replace(/[^a-z]/g, '_');
+        
+        // If it's a date field, extract only the date part (YYYY-MM-DD)
+        if (dateFields.some(dateField => fieldName.includes(dateField) || label.toLowerCase().includes('tarehe'))) {
+            displayValue = extractDateOnly(value);
+        }
+        
         // Wrap long text - use smaller width for long labels
         const maxWidth = 165 - xPos; // Reduced from 180 to prevent overflow
-        const lines = doc.splitTextToSize(value.toString(), maxWidth);
+        const lines = doc.splitTextToSize(displayValue, maxWidth);
         
         if (lines.length > 1) {
             // First line on same line as label
@@ -1110,7 +1166,7 @@
             }
         } else {
             // Single line - add spacing between label and value
-            doc.text(value.toString(), xPos + 40, yPos);
+            doc.text(displayValue, xPos + 40, yPos);
             yPos += 6;
         }
     };
@@ -1133,11 +1189,11 @@
     if (record.photo) {
         try {
             const imgData = await getBase64Image('/storage/' + record.photo);
-            // Add border around photo - MOVED DOWN to yPos 70 (from 45)
+            // Add border around photo
             doc.setDrawColor(200, 200, 200);
             doc.setLineWidth(0.5);
-            doc.roundedRect(150, 52, 45, 55, 3, 3); // Changed y from 45 to 65
-            doc.addImage(imgData, 'JPEG', 152, 54, 41, 51); // Changed y from 47 to 67
+            doc.roundedRect(150, 52, 45, 55, 3, 3);
+            doc.addImage(imgData, 'JPEG', 152, 54, 41, 51);
         } catch (e) {
             console.error("Could not load image", e);
         }
@@ -1163,77 +1219,65 @@
         addLabeledText('Tarehe ya Ndoa', record.tarehe_ndoa);
     }
     
-    // Children
-// Children Section - Clean and Simple
-const watoto = parseJson(record.watoto);
-if (watoto.length > 0) {
-    checkPageBreak(15);
-    
-    // Section header
-    yPos += 5;
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(12);
-    doc.setTextColor(...primaryColor);
-    doc.text('WATOTO/WADEPENDANTS:', 15, yPos);
-    yPos += 8;
-    
-    // Create a mini-table
-    const colHeaders = ['SN', 'JINA', 'TAREHE', 'UHUSIANO'];
-    const colX = [20, 45, 120, 160]; // X positions for columns
-    
-    // Table header with background
-    doc.setFillColor(...primaryColor);
-    doc.rect(15, yPos - 5, 180, 7, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFont('helvetica', 'bold');
-    
-    colHeaders.forEach((header, i) => {
-        doc.text(header, colX[i], yPos);
-    });
-    
-    yPos += 8;
-    doc.setTextColor(0, 0, 0);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-    
-    // Table rows
-    watoto.forEach((mtoto, index) => {
-        checkPageBreak(7);
+    // Children Section - Clean and Simple
+    const watoto = parseJson(record.watoto);
+    if (watoto.length > 0) {
+        checkPageBreak(15);
         
-        // Alternate row color
-        if (index % 2 === 0) {
-            doc.setFillColor(...lightGray);
-            doc.rect(15, yPos - 4, 180, 6, 'F');
-        }
+        // Section header
+        yPos += 5;
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(12);
+        doc.setTextColor(...primaryColor);
+        doc.text('WATOTO/WADEPENDANTS:', 15, yPos);
+        yPos += 8;
         
-        // Format date if available
-        let displayDate = mtoto.tarehe_kuzaliwa || '';
-        if (displayDate) {
-            try {
-                const date = new Date(displayDate);
-                if (!isNaN(date.getTime())) {
-                    displayDate = date.toLocaleDateString('sw-TZ', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric'
-                    });
-                }
-            } catch (e) {
-                // Keep original
+        // Create a mini-table
+        const colHeaders = ['SN', 'JINA', 'TAREHE', 'UHUSIANO'];
+        const colX = [20, 45, 120, 160]; // X positions for columns
+        
+        // Table header with background
+        doc.setFillColor(...primaryColor);
+        doc.rect(15, yPos - 5, 180, 7, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        
+        colHeaders.forEach((header, i) => {
+            doc.text(header, colX[i], yPos);
+        });
+        
+        yPos += 8;
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        
+        // Table rows
+        watoto.forEach((mtoto, index) => {
+            checkPageBreak(7);
+            
+            // Alternate row color
+            if (index % 2 === 0) {
+                doc.setFillColor(...lightGray);
+                doc.rect(15, yPos - 4, 180, 6, 'F');
             }
-        }
+            
+            // Format date if available
+            let displayDate = mtoto.tarehe_kuzaliwa || '';
+            if (displayDate) {
+                displayDate = extractDateOnly(displayDate);
+            }
+            
+            // Write row data
+            doc.text(`${index + 1}.`, colX[0], yPos);
+            doc.text(mtoto.jina || '-', colX[1], yPos);
+            doc.text(displayDate, colX[2], yPos);
+            doc.text(mtoto.uhusiano || '-', colX[3], yPos);
+            
+            yPos += 7;
+        });
         
-        // Write row data
-        doc.text(`${index + 1}.`, colX[0], yPos);
-        doc.text(mtoto.jina || '-', colX[1], yPos);
-        doc.text(displayDate, colX[2], yPos);
-        doc.text(mtoto.uhusiano || '-', colX[3], yPos);
-        
-        yPos += 7;
-    });
-    
-    yPos += 5;
-}
+        yPos += 5;
+    }
     
     yPos += 10;
     
@@ -1301,7 +1345,7 @@ if (watoto.length > 0) {
     
     addLabeledText('Umebatizwa', record.batizwa);
     
-    // Kipaimara with Mwaka on the same line - FIXED
+    // Kipaimara with Mwaka on the same line
     checkPageBreak(12); // Check space for both Kipaimara and Meza ya Bwana
     
     // Start Kipaimara on current line
@@ -1354,7 +1398,7 @@ if (watoto.length > 0) {
         yPos += 6;
     }
     
-    // Meza ya Bwana on NEXT line - FIXED
+    // Meza ya Bwana on NEXT line
     checkPageBreak(6); // Ensure space for Meza ya Bwana
     doc.setFont('helvetica', 'bold');
     doc.text('Meza ya Bwana:', 15, yPos);
