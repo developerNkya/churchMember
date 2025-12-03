@@ -204,7 +204,7 @@
                     <span class="label">Ukaguzi wa Taarifa:</span>
                     <span class="value">Itahakikiwa na msimamizi</span>
                 </li>
-                <li>
+                <!-- <li>
                     <span class="label">Picha ya Msharika:</span>
                     <span class="value">Utaletwa na picha ya passport</span>
                 </li>
@@ -215,7 +215,7 @@
                 <li>
                     <span class="label">Siku ya Kukaribishwa:</span>
                     <span class="value">Itatangazwa baadaye</span>
-                </li>
+                </li> -->
             </ul>
         </div>
         

@@ -164,7 +164,7 @@ class MemberController extends Controller
         // Create member
         Member::create($memberData);
 
-        return redirect()->route('registration.success')
+        return redirect()->route('member.success')
             ->with('success', 'Usajili wako umekamilika kikamilifu! Asante kwa kujiunga nasi.');
     }
 
