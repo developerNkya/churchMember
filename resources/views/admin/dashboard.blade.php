@@ -1029,209 +1029,400 @@
             });
         }
 
+
         async function downloadPDF(record) {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            // Helper to parse JSON
-            const parseJson = (str) => {
-                try { return JSON.parse(str) || []; } catch(e) { return []; }
-            };
-
-            // Header
-            doc.setFontSize(16);
-            doc.setFont('helvetica', 'bold');
-            doc.text('K.K.K.T DAYOSISI YA MASHARIKI NA PWANI', 105, 15, { align: 'center' });
-            doc.setFontSize(12);
-            doc.text('JIMBO LA KUSINI - USHARIKA WA MJI MWEMA', 105, 22, { align: 'center' });
-            
-            let yPos = 35;
-
-            // Image
-            if (record.photo) {
-                try {
-                    const imgData = await getBase64Image('/storage/' + record.photo);
-                    doc.addImage(imgData, 'JPEG', 160, 30, 35, 43.75);
-                } catch (e) {
-                    console.error("Could not load image", e);
-                }
-            }
-            
-            // Section A
-            doc.setFontSize(14);
-            doc.setFont('helvetica', 'bold');
-            doc.text('A. TARIFA BINAFSI', 15, yPos);
-            yPos += 8;
-            
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Jina la Msharika: ${record.jina || 'N/A'}`, 15, yPos);
-            yPos += 6;
-            doc.text(`Jinsi: ${record.jinsi || 'N/A'}`, 15, yPos);
-            yPos += 6;
-            doc.text(`Tarehe ya Kuzaliwa: ${record.tarehe_kuzaliwa || 'N/A'}`, 15, yPos);
-            yPos += 6;
-            doc.text(`Mahali Ulipozaliwa: ${record.mahali_kuzaliwa || 'N/A'}`, 15, yPos);
-            yPos += 6;
-            doc.text(`Hali ya Ndoa: ${record.hali_ndoa || 'N/A'}`, 15, yPos);
-            yPos += 6;
-            
-            if (record.jina_mwenzi) {
-                doc.text(`Jina la Mwenzi: ${record.jina_mwenzi}`, 15, yPos);
-                yPos += 6;
-            }
-            if (record.aina_ndoa) {
-                doc.text(`Aina ya Ndoa: ${record.aina_ndoa}`, 15, yPos);
-                yPos += 6;
-            }
-            if (record.tarehe_ndoa) {
-                doc.text(`Tarehe ya Ndoa: ${record.tarehe_ndoa}`, 15, yPos);
-                yPos += 6;
-            }
-
-            // Children
-            const watoto = parseJson(record.watoto);
-            if (watoto.length > 0) {
-                yPos += 2;
-                doc.setFont('helvetica', 'bold');
-                doc.text('Watoto:', 15, yPos);
-                yPos += 6;
-                doc.setFont('helvetica', 'normal');
-                watoto.forEach(mtoto => {
-                    doc.text(`- ${mtoto.jina} (${mtoto.tarehe_kuzaliwa}) [${mtoto.uhusiano}]`, 20, yPos);
-                    yPos += 6;
-                });
-            }
-            
-            yPos += 3;
-            
-            // Section B
-            doc.setFont('helvetica', 'bold');
-            doc.text('B. MAWASILIANO NA MAKAZI', 15, yPos);
-            yPos += 8;
-            
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Simu: ${record.simu || 'N/A'}`, 15, yPos);
-            yPos += 6;
-            if (record.simu_mwenzi) {
-                doc.text(`Simu ya Mwenzi: ${record.simu_mwenzi}`, 15, yPos);
-                yPos += 6;
-            }
-            doc.text(`Email: ${record.barua_pepe || 'N/A'}`, 15, yPos);
-            yPos += 6;
-            if (record.sanduku_barua) {
-                doc.text(`Sanduku la Barua: ${record.sanduku_barua}`, 15, yPos);
-                yPos += 6;
-            }
-            doc.text(`Mtaa/Jumuiya: ${record.mtaa || 'N/A'}`, 15, yPos);
-            yPos += 6;
-            doc.text(`Eneo: ${record.jina_eneo || 'N/A'}`, 15, yPos);
-            yPos += 6;
-            doc.text(`Namba ya Nyumba: ${record.namba_nyumba || 'N/A'}`, 15, yPos);
-            yPos += 6;
-            if (record.block_no) {
-                doc.text(`Block No: ${record.block_no}`, 15, yPos);
-                yPos += 6;
-            }
-            if (record.jirani_jina) {
-                doc.text(`Jirani: ${record.jirani_jina} (${record.jirani_simu || 'N/A'})`, 15, yPos);
-                yPos += 6;
-            }
-            if (record.mzee_kanisa) {
-                doc.text(`Mzee wa Kanisa: ${record.mzee_kanisa} (${record.simu_mzee || 'N/A'})`, 15, yPos);
-                yPos += 6;
-            }
-            
-            yPos += 3;
-            
-            // Check page break
-            if (yPos > 250) {
-                doc.addPage();
-                yPos = 20;
-            }
-
-            // Section C
-            doc.setFont('helvetica', 'bold');
-            doc.text('C. ELIMU NA KAZI YAKO', 15, yPos);
-            yPos += 8;
-            
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Kazi: ${record.kazi || 'N/A'}`, 15, yPos);
-            yPos += 6;
-            doc.text(`Mahali pa Kazi: ${record.mahali_kazi || 'N/A'}`, 15, yPos);
-            yPos += 6;
-            doc.text(`Elimu: ${record.elimu || 'N/A'}`, 15, yPos);
-            yPos += 6;
-            doc.text(`Ujuzi: ${record.ujuzi || 'N/A'}`, 15, yPos);
-            yPos += 9;
-            
-            // Section D
-            doc.setFont('helvetica', 'bold');
-            doc.text('D. HUDUMA ZA KIROHO', 15, yPos);
-            yPos += 8;
-            
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Umebatizwa: ${record.batizwa || 'N/A'}`, 15, yPos);
-            yPos += 6;
-            doc.text(`Kipaimara: ${record.kipaimara || 'N/A'}`, 15, yPos);
-            if (record.tarehe_kipaimara) {
-                doc.text(` - Tarehe: ${record.tarehe_kipaimara}`, 60, yPos);
-            }
-            yPos += 6;
-            doc.text(`Meza ya Bwana: ${record.meza_bwana || 'N/A'}`, 15, yPos);
-            yPos += 9;
-
-            // Section E
-            doc.setFont('helvetica', 'bold');
-            doc.text('E. USHIRIKI', 15, yPos);
-            yPos += 8;
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Jumuiya: ${record.jumuiya || 'N/A'} (${record.jina_jumuiya || 'N/A'})`, 15, yPos);
-            yPos += 6;
-            if (record.sababu) {
-                doc.text(`Sababu: ${record.sababu}`, 15, yPos);
-                yPos += 6;
-            }
-            
-            const huduma = parseJson(record.huduma);
-            const kwaya = parseJson(record.kwaya);
-            const umoja = parseJson(record.umoja);
-
-            if (huduma.length > 0) {
-                doc.text(`Huduma: ${huduma.join(', ')}`, 15, yPos);
-                yPos += 6;
-            }
-            if (kwaya.length > 0) {
-                doc.text(`Kwaya: ${kwaya.join(', ')}`, 15, yPos);
-                yPos += 6;
-            }
-            if (umoja.length > 0) {
-                doc.text(`Umoja: ${umoja.join(', ')}`, 15, yPos);
-                yPos += 6;
-            }
-
-            yPos += 3;
-
-            // Section F
-            doc.setFont('helvetica', 'bold');
-            doc.text('F. AHADI', 15, yPos);
-            yPos += 8;
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Ahadi ya Jengo: ${record.ahadi_jengo || '0'}`, 15, yPos);
-            yPos += 6;
-            doc.text(`Ahadi ya Uwakili: ${record.ahadi_uwakili || '0'}`, 15, yPos);
-            yPos += 6;
-            doc.text(`Ahadi Nyingine: ${record.ahadi_nyingine || '0'}`, 15, yPos);
-            yPos += 6;
-            doc.text(`Namba ya Ahadi: ${record.namba_ahadi || 'N/A'} (${record.namba_ahadi_specific || 'N/A'})`, 15, yPos);
-            
-            // Footer
-            // doc.setFontSize(8);
-            // doc.text(`Tarehe ya Kujaza: ${new Date(record.created_at || Date.now()).toLocaleDateString('sw-TZ')}`, 15, 285);
-            
-            doc.save(`${record.jina?.replace(/\s+/g, '_') || 'member'}_${record.id}.pdf`);
-            showToast('PDF imepakuliwa.', 'success');
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Define colors
+    const primaryColor = [41, 128, 185]; // Blue
+    const secondaryColor = [52, 152, 219]; // Light Blue
+    const accentColor = [231, 76, 60]; // Red
+    const lightGray = [241, 242, 246];
+    
+    // Helper to parse JSON
+    const parseJson = (str) => {
+        try { return JSON.parse(str) || []; } catch(e) { return []; }
+    };
+    
+    // Helper to format date to just year
+    const getYearFromDate = (dateString) => {
+        if (!dateString) return '';
+        try {
+            return new Date(dateString).getFullYear();
+        } catch (e) {
+            // Fallback: extract first 4 digits
+            const yearMatch = dateString.toString().match(/^\d{4}/);
+            return yearMatch ? yearMatch[0] : '';
         }
+    };
+    
+    // Function to check and add new page if needed
+    const checkPageBreak = (requiredSpace) => {
+        if (yPos + requiredSpace > 280) { // Leave 10mm margin at bottom
+            doc.addPage();
+            yPos = 20;
+            return true;
+        }
+        return false;
+    };
+    
+    // Function to add section with background
+    const addSection = (title) => {
+        checkPageBreak(15); // Check if we need new page for section
+        
+        doc.setFillColor(...primaryColor);
+        doc.roundedRect(10, yPos - 5, 190, 7, 2, 2, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(12);
+        doc.text(title, 15, yPos);
+        doc.setTextColor(0, 0, 0);
+        yPos += 10;
+    };
+    
+    // Function to add labeled text with automatic line breaks for long text
+    const addLabeledText = (label, value, indent = 0) => {
+        if (!value && value !== 0) return; // Skip if no value (but allow 0)
+        
+        checkPageBreak(6); // Check if we need new page for this line
+        
+        const xPos = 15 + indent;
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`${label}:`, xPos, yPos);
+        doc.setFont('helvetica', 'normal');
+        
+        // Wrap long text - use smaller width for long labels
+        const maxWidth = 165 - xPos; // Reduced from 180 to prevent overflow
+        const lines = doc.splitTextToSize(value.toString(), maxWidth);
+        
+        if (lines.length > 1) {
+            // First line on same line as label
+            doc.text(lines[0], xPos + 40, yPos);
+            yPos += 6;
+            
+            // Subsequent lines indented
+            for (let i = 1; i < lines.length; i++) {
+                checkPageBreak(6);
+                doc.text(lines[i], xPos + 10, yPos);
+                yPos += 6;
+            }
+        } else {
+            // Single line - add spacing between label and value
+            doc.text(value.toString(), xPos + 40, yPos);
+            yPos += 6;
+        }
+    };
+    
+    // Header with colored background
+    doc.setFillColor(...primaryColor);
+    doc.rect(0, 0, 210, 40, 'F');
+    
+    // Header text
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(255, 255, 255);
+    doc.text('K.K.K.T DAYOSISI YA MASHARIKI NA PWANI', 105, 15, { align: 'center' });
+    doc.setFontSize(12);
+    doc.text('JIMBO LA KUSINI - USHARIKA WA MJI MWEMA', 105, 23, { align: 'center' });
+    
+    let yPos = 50;
+    
+    // Photo with border - MOVED LOWER
+    if (record.photo) {
+        try {
+            const imgData = await getBase64Image('/storage/' + record.photo);
+            // Add border around photo - MOVED DOWN to yPos 70 (from 45)
+            doc.setDrawColor(200, 200, 200);
+            doc.setLineWidth(0.5);
+            doc.roundedRect(150, 52, 45, 55, 3, 3); // Changed y from 45 to 65
+            doc.addImage(imgData, 'JPEG', 152, 54, 41, 51); // Changed y from 47 to 67
+        } catch (e) {
+            console.error("Could not load image", e);
+        }
+    }
+    
+    // ========== SECTION A: TARIFA BINAFSI ==========
+    addSection('A. TARIFA BINAFSI');
+    
+    // Use addLabeledText for fields that might have long values
+    addLabeledText('Jina la Msharika', record.jina);
+    addLabeledText('Jinsi', record.jinsi);
+    addLabeledText('Tarehe ya Kuzaliwa', record.tarehe_kuzaliwa);
+    addLabeledText('Mahali Kuzaliwa', record.mahali_kuzaliwa);
+    addLabeledText('Hali ya Ndoa', record.hali_ndoa);
+    
+    if (record.jina_mwenzi) {
+        addLabeledText('Jina la Mwenzi', record.jina_mwenzi);
+    }
+    if (record.aina_ndoa) {
+        addLabeledText('Aina ya Ndoa', record.aina_ndoa);
+    }
+    if (record.tarehe_ndoa) {
+        addLabeledText('Tarehe ya Ndoa', record.tarehe_ndoa);
+    }
+    
+    // Children
+    const watoto = parseJson(record.watoto);
+    if (watoto.length > 0) {
+        checkPageBreak(10);
+        yPos += 3;
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(...primaryColor);
+        doc.text('Watoto:', 15, yPos);
+        yPos += 6;
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('helvetica', 'normal');
+        
+        watoto.forEach((mtoto, index) => {
+            checkPageBreak(6);
+            
+            // Alternate background for rows
+            if (index % 2 === 0) {
+                doc.setFillColor(...lightGray);
+                doc.rect(20, yPos - 4, 170, 5, 'F');
+            }
+            
+            // Format child information with proper spacing
+            const childInfo = `${mtoto.jina || ''} (${mtoto.tarehe_kuzaliwa || ''}) [${mtoto.uhusiano || ''}]`;
+            const childLines = doc.splitTextToSize(childInfo, 160);
+            
+            if (childLines.length > 1) {
+                doc.text(`${index + 1}. ${childLines[0]}`, 22, yPos);
+                yPos += 6;
+                for (let i = 1; i < childLines.length; i++) {
+                    checkPageBreak(6);
+                    doc.text(childLines[i], 32, yPos);
+                    yPos += 6;
+                }
+            } else {
+                doc.text(`${index + 1}. ${childInfo}`, 22, yPos);
+                yPos += 6;
+            }
+        });
+    }
+    
+    yPos += 10;
+    
+    // ========== SECTION B: MAWASILIANO NA MAKAZI ==========
+    addSection('B. MAWASILIANO NA MAKAZI');
+    
+    // Use addLabeledText for better spacing on long values
+    addLabeledText('Simu', record.simu);
+    if (record.simu_mwenzi) {
+        addLabeledText('Simu ya Mwenzi', record.simu_mwenzi);
+    }
+    addLabeledText('Email', record.barua_pepe);
+    if (record.sanduku_barua) {
+        addLabeledText('Sanduku la Barua', record.sanduku_barua);
+    }
+    
+    yPos += 3;
+    
+    // Address information with subheading
+    checkPageBreak(10);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...primaryColor);
+    doc.text('MAKAZI:', 15, yPos);
+    yPos += 6;
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('helvetica', 'normal');
+    
+    // Use addLabeledText for address fields that might be long
+    addLabeledText('Mtaa/Jumuiya', record.mtaa);
+    addLabeledText('Eneo', record.jina_eneo);
+    addLabeledText('Namba ya Nyumba', record.namba_nyumba);
+    if (record.block_no) {
+        addLabeledText('Block No', record.block_no);
+    }
+    
+    // Contact references with proper spacing
+    if (record.jirani_jina) {
+        const jiraniInfo = `${record.jirani_jina} (${record.jirani_simu || ''})`;
+        addLabeledText('Jirani', jiraniInfo);
+    }
+    if (record.mzee_kanisa) {
+        const mzeeInfo = `${record.mzee_kanisa} (${record.simu_mzee || ''})`;
+        addLabeledText('Mzee wa Kanisa', mzeeInfo);
+    }
+    
+    // Add horizontal line separator
+    checkPageBreak(5);
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.3);
+    doc.line(15, yPos, 195, yPos);
+    yPos += 10;
+    
+    // ========== SECTION C: ELIMU NA KAZI YAKO ==========
+    addSection('C. ELIMU NA KAZI YAKO');
+    
+    addLabeledText('Kazi', record.kazi);
+    addLabeledText('Mahali pa Kazi', record.mahali_kazi);
+    addLabeledText('Elimu', record.elimu);
+    addLabeledText('Ujuzi', record.ujuzi);
+    
+    yPos += 10;
+    
+    // ========== SECTION D: HUDUMA ZA KIROHO ==========
+    addSection('D. HUDUMA ZA KIROHO');
+    
+    addLabeledText('Umebatizwa', record.batizwa);
+    
+    // Kipaimara with Mwaka on the same line - FIXED
+    checkPageBreak(12); // Check space for both Kipaimara and Meza ya Bwana
+    
+    // Start Kipaimara on current line
+    doc.setFont('helvetica', 'bold');
+    doc.text('Kipaimara:', 15, yPos);
+    doc.setFont('helvetica', 'normal');
+    
+    // Handle kipaimara value (might be long)
+    const kipaimaraValue = record.kipaimara || 'N/A';
+    const kipaimaraLines = doc.splitTextToSize(kipaimaraValue, 70);
+    
+    if (kipaimaraLines.length > 1) {
+        // If kipaimara value is long (multiple lines), put Mwaka on next line
+        doc.text(kipaimaraLines[0], 45, yPos);
+        yPos += 6;
+        
+        // Add remaining kipaimara lines
+        for (let i = 1; i < kipaimaraLines.length; i++) {
+            checkPageBreak(6);
+            doc.text(kipaimaraLines[i], 25, yPos);
+            yPos += 6;
+        }
+        
+        // Now add Mwaka on its own line
+        if (record.tarehe_kipaimara) {
+            const year = getYearFromDate(record.tarehe_kipaimara);
+            if (year) {
+                checkPageBreak(6);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Mwaka:', 15, yPos);
+                doc.setFont('helvetica', 'normal');
+                doc.text(year.toString(), 45, yPos);
+                yPos += 6;
+            }
+        }
+    } else {
+        // Kipaimara is short (single line) - put value and Mwaka on same line
+        doc.text(kipaimaraValue, 45, yPos);
+        
+        // Add Mwaka on the right side of the same line
+        if (record.tarehe_kipaimara) {
+            const year = getYearFromDate(record.tarehe_kipaimara);
+            if (year) {
+                doc.setFont('helvetica', 'bold');
+                doc.text('Mwaka:', 110, yPos);
+                doc.setFont('helvetica', 'normal');
+                doc.text(year.toString(), 140, yPos);
+            }
+        }
+        yPos += 6;
+    }
+    
+    // Meza ya Bwana on NEXT line - FIXED
+    checkPageBreak(6); // Ensure space for Meza ya Bwana
+    doc.setFont('helvetica', 'bold');
+    doc.text('Meza ya Bwana:', 15, yPos);
+    doc.setFont('helvetica', 'normal');
+    doc.text(record.meza_bwana || 'N/A', 55, yPos);
+    yPos += 6;
+    
+    yPos += 3; // Extra spacing after section
+    
+    // ========== SECTION E: USHIRIKI ==========
+    addSection('E. USHIRIKI');
+    
+    const jumuiyaInfo = `${record.jumuiya || 'N/A'} (${record.jina_jumuiya || 'N/A'})`;
+    addLabeledText('Jumuiya', jumuiyaInfo);
+    
+    if (record.sababu) {
+        addLabeledText('Sababu', record.sababu);
+    }
+    
+    // Display arrays with proper formatting and page breaks
+    const displayArraySection = (title, array) => {
+        if (array.length > 0) {
+            checkPageBreak(8);
+            yPos += 3;
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...primaryColor);
+            doc.text(`${title}:`, 15, yPos);
+            yPos += 6;
+            doc.setTextColor(0, 0, 0);
+            doc.setFont('helvetica', 'normal');
+            
+            // Display as comma-separated with wrapping
+            const text = array.join(', ');
+            const lines = doc.splitTextToSize(text, 170);
+            
+            lines.forEach(line => {
+                checkPageBreak(6);
+                doc.text(line, 20, yPos);
+                yPos += 6;
+            });
+        }
+    };
+    
+    displayArraySection('Huduma', parseJson(record.huduma));
+    displayArraySection('Kwaya', parseJson(record.kwaya));
+    displayArraySection('Umoja', parseJson(record.umoja));
+    
+    yPos += 10;
+    
+    // ========== SECTION F: AHADI ==========
+    addSection('F. AHADI');
+    
+    // Function to add amounts with proper formatting
+    const addAmount = (label, value) => {
+        checkPageBreak(6);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`${label}:`, 15, yPos);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`${value || '0'}`, 60, yPos);
+        yPos += 6;
+    };
+    
+    addAmount('Ahadi ya Jengo', record.ahadi_jengo);
+    addAmount('Ahadi ya Uwakili', record.ahadi_uwakili);
+    addAmount('Ahadi Nyingine', record.ahadi_nyingine);
+    
+    if (record.namba_ahadi) {
+        const ahadiInfo = `${record.namba_ahadi} (${record.namba_ahadi_specific || ''})`;
+        addLabeledText('Namba ya Ahadi', ahadiInfo);
+    }
+    
+    // Add footer to all pages (WATERMARK REMOVED)
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        
+        // Footer line
+        doc.setDrawColor(200, 200, 200);
+        doc.setLineWidth(0.5);
+        doc.line(15, 280, 195, 280);
+        
+        // Page number
+        doc.setFontSize(8);
+        doc.setTextColor(150, 150, 150);
+        doc.text(`Ukurasa ${i} wa ${totalPages}`, 105, 288, { align: 'center' });
+        
+        // Generated date
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('sw-TZ');
+        const timeStr = now.toLocaleTimeString('sw-TZ', { hour: '2-digit', minute: '2-digit' });
+        doc.text(`Imetengenezwa: ${dateStr} ${timeStr}`, 15, 285);
+    }
+    
+    // Save with timestamp
+    const timestamp = new Date().toISOString().split('T')[0];
+    const filename = `${record.jina?.replace(/\s+/g, '_') || 'member'}_${record.id}_${timestamp}.pdf`;
+    doc.save(filename);
+    
+    showToast('PDF imepakuliwa kwa mafanikio.', 'success');
+}
 
         function getBase64Image(url) {
             return new Promise((resolve, reject) => {
