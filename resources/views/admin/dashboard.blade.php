@@ -1164,44 +1164,76 @@
     }
     
     // Children
-    const watoto = parseJson(record.watoto);
-    if (watoto.length > 0) {
-        checkPageBreak(10);
-        yPos += 3;
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(...primaryColor);
-        doc.text('Watoto:', 15, yPos);
-        yPos += 6;
-        doc.setTextColor(0, 0, 0);
-        doc.setFont('helvetica', 'normal');
+// Children Section - Clean and Simple
+const watoto = parseJson(record.watoto);
+if (watoto.length > 0) {
+    checkPageBreak(15);
+    
+    // Section header
+    yPos += 5;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(...primaryColor);
+    doc.text('WATOTO/WADEPENDANTS:', 15, yPos);
+    yPos += 8;
+    
+    // Create a mini-table
+    const colHeaders = ['SN', 'JINA', 'TAREHE', 'UHUSIANO'];
+    const colX = [20, 45, 120, 160]; // X positions for columns
+    
+    // Table header with background
+    doc.setFillColor(...primaryColor);
+    doc.rect(15, yPos - 5, 180, 7, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    
+    colHeaders.forEach((header, i) => {
+        doc.text(header, colX[i], yPos);
+    });
+    
+    yPos += 8;
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    
+    // Table rows
+    watoto.forEach((mtoto, index) => {
+        checkPageBreak(7);
         
-        watoto.forEach((mtoto, index) => {
-            checkPageBreak(6);
-            
-            // Alternate background for rows
-            if (index % 2 === 0) {
-                doc.setFillColor(...lightGray);
-                doc.rect(20, yPos - 4, 170, 5, 'F');
-            }
-            
-            // Format child information with proper spacing
-            const childInfo = `${mtoto.jina || ''} (${mtoto.tarehe_kuzaliwa || ''}) [${mtoto.uhusiano || ''}]`;
-            const childLines = doc.splitTextToSize(childInfo, 160);
-            
-            if (childLines.length > 1) {
-                doc.text(`${index + 1}. ${childLines[0]}`, 22, yPos);
-                yPos += 6;
-                for (let i = 1; i < childLines.length; i++) {
-                    checkPageBreak(6);
-                    doc.text(childLines[i], 32, yPos);
-                    yPos += 6;
+        // Alternate row color
+        if (index % 2 === 0) {
+            doc.setFillColor(...lightGray);
+            doc.rect(15, yPos - 4, 180, 6, 'F');
+        }
+        
+        // Format date if available
+        let displayDate = mtoto.tarehe_kuzaliwa || '';
+        if (displayDate) {
+            try {
+                const date = new Date(displayDate);
+                if (!isNaN(date.getTime())) {
+                    displayDate = date.toLocaleDateString('sw-TZ', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    });
                 }
-            } else {
-                doc.text(`${index + 1}. ${childInfo}`, 22, yPos);
-                yPos += 6;
+            } catch (e) {
+                // Keep original
             }
-        });
-    }
+        }
+        
+        // Write row data
+        doc.text(`${index + 1}.`, colX[0], yPos);
+        doc.text(mtoto.jina || '-', colX[1], yPos);
+        doc.text(displayDate, colX[2], yPos);
+        doc.text(mtoto.uhusiano || '-', colX[3], yPos);
+        
+        yPos += 7;
+    });
+    
+    yPos += 5;
+}
     
     yPos += 10;
     
