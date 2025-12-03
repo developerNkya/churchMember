@@ -173,6 +173,9 @@ class MemberController extends Controller
      */
     public function success()
     {
+        if (!session()->has('success')) {
+            return redirect()->route('home');
+        }
         return view('members.success');
     }
 }
