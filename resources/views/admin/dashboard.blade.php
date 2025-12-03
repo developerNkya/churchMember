@@ -618,6 +618,8 @@
                 <form id="editForm" class="form-grid">
                     @csrf
                     @method('PUT')
+                    
+                    <!-- Section A -->
                     <div class="form-group">
                         <label for="edit_jina" class="form-label">Jina la Msharika</label>
                         <input type="text" id="edit_jina" name="jina" class="form-input" required>
@@ -631,21 +633,95 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label for="edit_tarehe_kuzaliwa" class="form-label">Tarehe ya Kuzaliwa</label>
+                        <input type="date" id="edit_tarehe_kuzaliwa" name="tarehe_kuzaliwa" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_mahali_kuzaliwa" class="form-label">Mahali pa Kuzaliwa</label>
+                        <input type="text" id="edit_mahali_kuzaliwa" name="mahali_kuzaliwa" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_hali_ndoa" class="form-label">Hali ya Ndoa</label>
+                        <select id="edit_hali_ndoa" name="hali_ndoa" class="form-select" required>
+                            <option value="">Chagua</option>
+                            <option value="Umeoa">Umeoa</option>
+                            <option value="Hujaoa">Hujaoa</option>
+                            <option value="Umeolewa">Umeolewa</option>
+                            <option value="Hujaolewa">Hujaolewa</option>
+                            <option value="Mgane">Mgane</option>
+                            <option value="Mjane">Mjane</option>
+                            <option value="Talikiwa">Talikiwa</option>
+                            <option value="Tengana">Tengana</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_jina_mwenzi" class="form-label">Jina la Mwenzi</label>
+                        <input type="text" id="edit_jina_mwenzi" name="jina_mwenzi" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_aina_ndoa" class="form-label">Aina ya Ndoa</label>
+                        <select id="edit_aina_ndoa" name="aina_ndoa" class="form-select">
+                            <option value="">Chagua</option>
+                            <option value="Kikristo">Kikristo</option>
+                            <option value="Siyo Kikristo">Siyo Kikristo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_tarehe_ndoa" class="form-label">Tarehe ya Ndoa</label>
+                        <input type="date" id="edit_tarehe_ndoa" name="tarehe_ndoa" class="form-input">
+                    </div>
+
+                    <!-- Section B -->
+                    <div class="form-group">
                         <label for="edit_simu" class="form-label">Namba ya Simu</label>
                         <input type="tel" id="edit_simu" name="simu" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_simu_mwenzi" class="form-label">Simu ya Mwenzi</label>
+                        <input type="tel" id="edit_simu_mwenzi" name="simu_mwenzi" class="form-input">
                     </div>
                     <div class="form-group">
                         <label for="edit_barua_pepe" class="form-label">Email</label>
                         <input type="email" id="edit_barua_pepe" name="barua_pepe" class="form-input">
                     </div>
                     <div class="form-group">
+                        <label for="edit_sanduku_barua" class="form-label">Sanduku la Barua</label>
+                        <input type="text" id="edit_sanduku_barua" name="sanduku_barua" class="form-input">
+                    </div>
+                    <div class="form-group">
                         <label for="edit_mtaa" class="form-label">Mtaa/Jumuiya</label>
                         <input type="text" id="edit_mtaa" name="mtaa" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_namba_nyumba" class="form-label">Namba ya Nyumba</label>
+                        <input type="text" id="edit_namba_nyumba" name="namba_nyumba" class="form-input">
                     </div>
                     <div class="form-group">
                         <label for="edit_jina_eneo" class="form-label">Eneo</label>
                         <input type="text" id="edit_jina_eneo" name="jina_eneo" class="form-input" required>
                     </div>
+                    <div class="form-group">
+                        <label for="edit_block_no" class="form-label">Block No</label>
+                        <input type="text" id="edit_block_no" name="block_no" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_jirani_jina" class="form-label">Jina la Jirani</label>
+                        <input type="text" id="edit_jirani_jina" name="jirani_jina" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_jirani_simu" class="form-label">Simu ya Jirani</label>
+                        <input type="tel" id="edit_jirani_simu" name="jirani_simu" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_mzee_kanisa" class="form-label">Mzee wa Kanisa</label>
+                        <input type="text" id="edit_mzee_kanisa" name="mzee_kanisa" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_simu_mzee" class="form-label">Simu ya Mzee wa Kanisa</label>
+                        <input type="tel" id="edit_simu_mzee" name="simu_mzee" class="form-input">
+                    </div>
+
+                    <!-- Section C -->
                     <div class="form-group">
                         <label for="edit_kazi" class="form-label">Kazi</label>
                         <input type="text" id="edit_kazi" name="kazi" class="form-input" required>
@@ -653,6 +729,86 @@
                     <div class="form-group">
                         <label for="edit_mahali_kazi" class="form-label">Mahali pa Kazi</label>
                         <input type="text" id="edit_mahali_kazi" name="mahali_kazi" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_elimu" class="form-label">Elimu</label>
+                        <input type="text" id="edit_elimu" name="elimu" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_ujuzi" class="form-label">Ujuzi</label>
+                        <input type="text" id="edit_ujuzi" name="ujuzi" class="form-input">
+                    </div>
+
+                    <!-- Section D -->
+                    <div class="form-group">
+                        <label for="edit_batizwa" class="form-label">Umebatizwa?</label>
+                        <select id="edit_batizwa" name="batizwa" class="form-select" required>
+                            <option value="Ndiyo">Ndiyo</option>
+                            <option value="Hapana">Hapana</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_kipaimara" class="form-label">Umepata Kipaimara?</label>
+                        <select id="edit_kipaimara" name="kipaimara" class="form-select">
+                            <option value="">Chagua</option>
+                            <option value="Ndiyo">Ndiyo</option>
+                            <option value="Hapana">Hapana</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_tarehe_kipaimara" class="form-label">Tarehe ya Kipaimara</label>
+                        <input type="date" id="edit_tarehe_kipaimara" name="tarehe_kipaimara" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_meza_bwana" class="form-label">Unashiriki Meza ya Bwana?</label>
+                        <select id="edit_meza_bwana" name="meza_bwana" class="form-select" required>
+                            <option value="Ndiyo">Ndiyo</option>
+                            <option value="Hapana">Hapana</option>
+                        </select>
+                    </div>
+
+                    <!-- Section E -->
+                    <div class="form-group">
+                        <label for="edit_jumuiya" class="form-label">Unashiriki Jumuiya?</label>
+                        <select id="edit_jumuiya" name="jumuiya" class="form-select">
+                            <option value="">Chagua</option>
+                            <option value="Ndiyo">Ndiyo</option>
+                            <option value="Hapana">Hapana</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_jina_jumuiya" class="form-label">Jina la Jumuiya</label>
+                        <input type="text" id="edit_jina_jumuiya" name="jina_jumuiya" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_sababu" class="form-label">Sababu (kama huna jumuiya)</label>
+                        <input type="text" id="edit_sababu" name="sababu" class="form-input">
+                    </div>
+
+                    <!-- Section F -->
+                    <div class="form-group">
+                        <label for="edit_ahadi_jengo" class="form-label">Ahadi ya Jengo</label>
+                        <input type="number" id="edit_ahadi_jengo" name="ahadi_jengo" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_ahadi_uwakili" class="form-label">Ahadi ya Uwakili</label>
+                        <input type="number" id="edit_ahadi_uwakili" name="ahadi_uwakili" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_ahadi_nyingine" class="form-label">Ahadi Nyingine</label>
+                        <input type="number" id="edit_ahadi_nyingine" name="ahadi_nyingine" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_namba_ahadi" class="form-label">Una Namba ya Ahadi?</label>
+                        <select id="edit_namba_ahadi" name="namba_ahadi" class="form-select">
+                            <option value="">Chagua</option>
+                            <option value="Ndiyo">Ndiyo</option>
+                            <option value="Hapana">Hapana</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_namba_ahadi_specific" class="form-label">Namba ya Ahadi</label>
+                        <input type="text" id="edit_namba_ahadi_specific" name="namba_ahadi_specific" class="form-input">
                     </div>
                 </form>
             </div>
@@ -700,6 +856,16 @@
                 photoContainer.style.display = 'none';
             }
             
+            // Helper to parse JSON safely
+            const parseJson = (str) => {
+                try { return JSON.parse(str) || []; } catch(e) { return []; }
+            };
+
+            const watoto = parseJson(record.watoto);
+            const huduma = parseJson(record.huduma);
+            const kwaya = parseJson(record.kwaya);
+            const umoja = parseJson(record.umoja);
+
             // Update content
             document.getElementById('viewContent').innerHTML = `
                 <div>
@@ -711,16 +877,32 @@
                         <div class="info-item"><strong>Mahali:</strong> <span>${record.mahali_kuzaliwa || 'N/A'}</span></div>
                         <div class="info-item"><strong>Hali ya Ndoa:</strong> <span>${record.hali_ndoa || 'N/A'}</span></div>
                         <div class="info-item"><strong>Mwenzi:</strong> <span>${record.jina_mwenzi || 'N/A'}</span></div>
+                        <div class="info-item"><strong>Aina ya Ndoa:</strong> <span>${record.aina_ndoa || 'N/A'}</span></div>
+                        <div class="info-item"><strong>Tarehe ya Ndoa:</strong> <span>${record.tarehe_ndoa || 'N/A'}</span></div>
                     </div>
+                    ${watoto.length > 0 ? `
+                        <div style="margin-top: 10px;">
+                            <strong>Watoto:</strong>
+                            <ul style="padding-left: 20px; color: #6b7280; font-size: 14px;">
+                                ${watoto.map(m => `<li>${m.jina} (${m.tarehe_kuzaliwa}) - ${m.uhusiano}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
                 </div>
                 
                 <div>
                     <h3 class="section-title">B. Mawasiliano</h3>
                     <div class="info-grid">
                         <div class="info-item"><strong>Simu:</strong> <span>${record.simu || 'N/A'}</span></div>
+                        <div class="info-item"><strong>Simu ya Mwenzi:</strong> <span>${record.simu_mwenzi || 'N/A'}</span></div>
                         <div class="info-item"><strong>Email:</strong> <span>${record.barua_pepe || 'N/A'}</span></div>
+                        <div class="info-item"><strong>Sanduku la Barua:</strong> <span>${record.sanduku_barua || 'N/A'}</span></div>
                         <div class="info-item"><strong>Mtaa:</strong> <span>${record.mtaa || 'N/A'}</span></div>
                         <div class="info-item"><strong>Eneo:</strong> <span>${record.jina_eneo || 'N/A'}</span></div>
+                        <div class="info-item"><strong>Namba ya Nyumba:</strong> <span>${record.namba_nyumba || 'N/A'}</span></div>
+                        <div class="info-item"><strong>Block No:</strong> <span>${record.block_no || 'N/A'}</span></div>
+                        <div class="info-item"><strong>Jirani:</strong> <span>${record.jirani_jina || 'N/A'} (${record.jirani_simu || 'N/A'})</span></div>
+                        <div class="info-item"><strong>Mzee wa Kanisa:</strong> <span>${record.mzee_kanisa || 'N/A'} (${record.simu_mzee || 'N/A'})</span></div>
                     </div>
                 </div>
                 
@@ -738,8 +920,31 @@
                     <h3 class="section-title">D. Huduma za Kiroho</h3>
                     <div class="info-grid">
                         <div class="info-item"><strong>Batizo:</strong> <span>${record.batizwa || 'N/A'}</span></div>
-                        <div class="info-item"><strong>Kipaimara:</strong> <span>${record.kipaimara || 'N/A'}</span></div>
+                        <div class="info-item"><strong>Kipaimara:</strong> <span>${record.kipaimara || 'N/A'} (${record.tarehe_kipaimara || 'N/A'})</span></div>
                         <div class="info-item"><strong>Meza ya Bwana:</strong> <span>${record.meza_bwana || 'N/A'}</span></div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="section-title">E. Ushiriki</h3>
+                    <div class="info-grid">
+                        <div class="info-item"><strong>Jumuiya:</strong> <span>${record.jumuiya || 'N/A'} (${record.jina_jumuiya || 'N/A'})</span></div>
+                        <div class="info-item"><strong>Sababu:</strong> <span>${record.sababu || 'N/A'}</span></div>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 14px; color: #6b7280;">
+                        <strong>Huduma:</strong> ${huduma.join(', ') || 'N/A'}<br>
+                        <strong>Kwaya:</strong> ${kwaya.join(', ') || 'N/A'}<br>
+                        <strong>Umoja:</strong> ${umoja.join(', ') || 'N/A'}
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="section-title">F. Ahadi</h3>
+                    <div class="info-grid">
+                        <div class="info-item"><strong>Jengo:</strong> <span>${record.ahadi_jengo || '0'}</span></div>
+                        <div class="info-item"><strong>Uwakili:</strong> <span>${record.ahadi_uwakili || '0'}</span></div>
+                        <div class="info-item"><strong>Nyingine:</strong> <span>${record.ahadi_nyingine || '0'}</span></div>
+                        <div class="info-item"><strong>Namba ya Ahadi:</strong> <span>${record.namba_ahadi || 'N/A'} (${record.namba_ahadi_specific || 'N/A'})</span></div>
                     </div>
                 </div>
             `;
@@ -749,14 +954,19 @@
 
         function handleEdit(record) {
             // Fill form
-            document.getElementById('edit_jina').value = record.jina || '';
-            document.getElementById('edit_jinsi').value = record.jinsi || '';
-            document.getElementById('edit_simu').value = record.simu || '';
-            document.getElementById('edit_barua_pepe').value = record.barua_pepe || '';
-            document.getElementById('edit_mtaa').value = record.mtaa || '';
-            document.getElementById('edit_jina_eneo').value = record.jina_eneo || '';
-            document.getElementById('edit_kazi').value = record.kazi || '';
-            document.getElementById('edit_mahali_kazi').value = record.mahali_kazi || '';
+            const fields = [
+                'jina', 'jinsi', 'tarehe_kuzaliwa', 'mahali_kuzaliwa', 'hali_ndoa', 'jina_mwenzi', 'aina_ndoa', 'tarehe_ndoa',
+                'simu', 'simu_mwenzi', 'barua_pepe', 'sanduku_barua', 'mtaa', 'namba_nyumba', 'jina_eneo', 'block_no', 'jirani_jina', 'jirani_simu', 'mzee_kanisa', 'simu_mzee',
+                'kazi', 'mahali_kazi', 'elimu', 'ujuzi',
+                'batizwa', 'kipaimara', 'tarehe_kipaimara', 'meza_bwana',
+                'jumuiya', 'jina_jumuiya', 'sababu',
+                'ahadi_jengo', 'ahadi_uwakili', 'ahadi_nyingine', 'namba_ahadi', 'namba_ahadi_specific'
+            ];
+
+            fields.forEach(field => {
+                const el = document.getElementById('edit_' + field);
+                if (el) el.value = record[field] || '';
+            });
             
             // Store the record ID for submission
             const form = document.getElementById('editForm');
@@ -823,6 +1033,11 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
+            // Helper to parse JSON
+            const parseJson = (str) => {
+                try { return JSON.parse(str) || []; } catch(e) { return []; }
+            };
+
             // Header
             doc.setFontSize(16);
             doc.setFont('helvetica', 'bold');
@@ -865,6 +1080,28 @@
                 doc.text(`Jina la Mwenzi: ${record.jina_mwenzi}`, 15, yPos);
                 yPos += 6;
             }
+            if (record.aina_ndoa) {
+                doc.text(`Aina ya Ndoa: ${record.aina_ndoa}`, 15, yPos);
+                yPos += 6;
+            }
+            if (record.tarehe_ndoa) {
+                doc.text(`Tarehe ya Ndoa: ${record.tarehe_ndoa}`, 15, yPos);
+                yPos += 6;
+            }
+
+            // Children
+            const watoto = parseJson(record.watoto);
+            if (watoto.length > 0) {
+                yPos += 2;
+                doc.setFont('helvetica', 'bold');
+                doc.text('Watoto:', 15, yPos);
+                yPos += 6;
+                doc.setFont('helvetica', 'normal');
+                watoto.forEach(mtoto => {
+                    doc.text(`- ${mtoto.jina} (${mtoto.tarehe_kuzaliwa}) [${mtoto.uhusiano}]`, 20, yPos);
+                    yPos += 6;
+                });
+            }
             
             yPos += 3;
             
@@ -876,15 +1113,43 @@
             doc.setFont('helvetica', 'normal');
             doc.text(`Simu: ${record.simu || 'N/A'}`, 15, yPos);
             yPos += 6;
+            if (record.simu_mwenzi) {
+                doc.text(`Simu ya Mwenzi: ${record.simu_mwenzi}`, 15, yPos);
+                yPos += 6;
+            }
             doc.text(`Email: ${record.barua_pepe || 'N/A'}`, 15, yPos);
             yPos += 6;
+            if (record.sanduku_barua) {
+                doc.text(`Sanduku la Barua: ${record.sanduku_barua}`, 15, yPos);
+                yPos += 6;
+            }
             doc.text(`Mtaa/Jumuiya: ${record.mtaa || 'N/A'}`, 15, yPos);
             yPos += 6;
             doc.text(`Eneo: ${record.jina_eneo || 'N/A'}`, 15, yPos);
             yPos += 6;
             doc.text(`Namba ya Nyumba: ${record.namba_nyumba || 'N/A'}`, 15, yPos);
-            yPos += 9;
+            yPos += 6;
+            if (record.block_no) {
+                doc.text(`Block No: ${record.block_no}`, 15, yPos);
+                yPos += 6;
+            }
+            if (record.jirani_jina) {
+                doc.text(`Jirani: ${record.jirani_jina} (${record.jirani_simu || 'N/A'})`, 15, yPos);
+                yPos += 6;
+            }
+            if (record.mzee_kanisa) {
+                doc.text(`Mzee wa Kanisa: ${record.mzee_kanisa} (${record.simu_mzee || 'N/A'})`, 15, yPos);
+                yPos += 6;
+            }
             
+            yPos += 3;
+            
+            // Check page break
+            if (yPos > 250) {
+                doc.addPage();
+                yPos = 20;
+            }
+
             // Section C
             doc.setFont('helvetica', 'bold');
             doc.text('C. ELIMU NA KAZI YAKO', 15, yPos);
@@ -909,12 +1174,60 @@
             doc.text(`Umebatizwa: ${record.batizwa || 'N/A'}`, 15, yPos);
             yPos += 6;
             doc.text(`Kipaimara: ${record.kipaimara || 'N/A'}`, 15, yPos);
+            if (record.tarehe_kipaimara) {
+                doc.text(` - Tarehe: ${record.tarehe_kipaimara}`, 60, yPos);
+            }
             yPos += 6;
             doc.text(`Meza ya Bwana: ${record.meza_bwana || 'N/A'}`, 15, yPos);
+            yPos += 9;
+
+            // Section E
+            doc.setFont('helvetica', 'bold');
+            doc.text('E. USHIRIKI', 15, yPos);
+            yPos += 8;
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Jumuiya: ${record.jumuiya || 'N/A'} (${record.jina_jumuiya || 'N/A'})`, 15, yPos);
+            yPos += 6;
+            if (record.sababu) {
+                doc.text(`Sababu: ${record.sababu}`, 15, yPos);
+                yPos += 6;
+            }
+            
+            const huduma = parseJson(record.huduma);
+            const kwaya = parseJson(record.kwaya);
+            const umoja = parseJson(record.umoja);
+
+            if (huduma.length > 0) {
+                doc.text(`Huduma: ${huduma.join(', ')}`, 15, yPos);
+                yPos += 6;
+            }
+            if (kwaya.length > 0) {
+                doc.text(`Kwaya: ${kwaya.join(', ')}`, 15, yPos);
+                yPos += 6;
+            }
+            if (umoja.length > 0) {
+                doc.text(`Umoja: ${umoja.join(', ')}`, 15, yPos);
+                yPos += 6;
+            }
+
+            yPos += 3;
+
+            // Section F
+            doc.setFont('helvetica', 'bold');
+            doc.text('F. AHADI', 15, yPos);
+            yPos += 8;
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Ahadi ya Jengo: ${record.ahadi_jengo || '0'}`, 15, yPos);
+            yPos += 6;
+            doc.text(`Ahadi ya Uwakili: ${record.ahadi_uwakili || '0'}`, 15, yPos);
+            yPos += 6;
+            doc.text(`Ahadi Nyingine: ${record.ahadi_nyingine || '0'}`, 15, yPos);
+            yPos += 6;
+            doc.text(`Namba ya Ahadi: ${record.namba_ahadi || 'N/A'} (${record.namba_ahadi_specific || 'N/A'})`, 15, yPos);
             
             // Footer
-            doc.setFontSize(8);
-            doc.text(`Tarehe ya Kujaza: ${new Date(record.created_at || Date.now()).toLocaleDateString('sw-TZ')}`, 15, 285);
+            // doc.setFontSize(8);
+            // doc.text(`Tarehe ya Kujaza: ${new Date(record.created_at || Date.now()).toLocaleDateString('sw-TZ')}`, 15, 285);
             
             doc.save(`${record.jina?.replace(/\s+/g, '_') || 'member'}_${record.id}.pdf`);
             showToast('PDF imepakuliwa.', 'success');

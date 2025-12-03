@@ -69,12 +69,53 @@ class AdminController extends Controller
         $validated = $request->validate([
             'jina' => 'required|string|max:255',
             'jinsi' => 'required|in:Me,Ke',
+            'tarehe_kuzaliwa' => 'required|date',
+            'mahali_kuzaliwa' => 'required|string|max:255',
+            'hali_ndoa' => 'required|in:Umeoa,Hujaoa,Umeolewa,Hujaolewa,Mgane,Mjane,Talikiwa,Tengana',
+            'jina_mwenzi' => 'nullable|string|max:255',
+            'aina_ndoa' => 'nullable|in:Kikristo,Siyo Kikristo',
+            'tarehe_ndoa' => 'nullable|date',
+            
+            // Section B
             'simu' => 'required|string|max:20',
+            'simu_mwenzi' => 'nullable|string|max:20',
+            'sanduku_barua' => 'nullable|string|max:255',
             'barua_pepe' => 'nullable|email|max:255',
             'mtaa' => 'required|string|max:255',
+            'namba_nyumba' => 'nullable|string|max:50',
             'jina_eneo' => 'required|string|max:255',
+            'block_no' => 'nullable|string|max:50',
+            'jirani_jina' => 'nullable|string|max:255',
+            'jirani_simu' => 'nullable|string|max:20',
+            'mzee_kanisa' => 'nullable|string|max:255',
+            'simu_mzee' => 'nullable|string|max:20',
+            
+            // Section C
             'kazi' => 'required|string|max:255',
             'mahali_kazi' => 'nullable|string|max:255',
+            'elimu' => 'nullable|string|max:255',
+            'ujuzi' => 'nullable|string|max:255',
+            
+            // Section D
+            'batizwa' => 'required|in:Ndiyo,Hapana',
+            'kipaimara' => 'nullable|in:Ndiyo,Hapana',
+            'tarehe_kipaimara' => 'nullable|date',
+            'meza_bwana' => 'required|in:Ndiyo,Hapana',
+            
+            // Section E
+            'jumuiya' => 'nullable|in:Ndiyo,Hapana',
+            'jina_jumuiya' => 'nullable|string|max:255',
+            'sababu' => 'nullable|string|max:255',
+            'huduma' => 'nullable|array',
+            'kwaya' => 'nullable|array',
+            'umoja' => 'nullable|array',
+            
+            // Section F
+            'ahadi_jengo' => 'nullable|numeric|min:0',
+            'ahadi_uwakili' => 'nullable|numeric|min:0',
+            'ahadi_nyingine' => 'nullable|numeric|min:0',
+            'namba_ahadi' => 'nullable|in:Ndiyo,Hapana',
+            'namba_ahadi_specific' => 'nullable|string|max:100',
         ]);
 
         $member->update($validated);
