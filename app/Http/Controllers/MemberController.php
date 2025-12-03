@@ -89,10 +89,21 @@ class MemberController extends Controller
         // Process dependents - watoto is now sent as JSON string from the form
         $watotoJson = $validated['watoto'] ?? null;
 
-        // Process photo upload
+        // Process photo upload - save to public directory
         $photoPath = null;
         if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('members/photos', 'public');
+            $file = $request->file('photo');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            
+            // Create directory if it doesn't exist
+            $publicPath = public_path('members/photos');
+            if (!file_exists($publicPath)) {
+                mkdir($publicPath, 0755, true);
+            }
+            
+            // Move file to public directory
+            $file->move($publicPath, $filename);
+            $photoPath = 'members/photos/' . $filename;
         }
 
         // Prepare data for database

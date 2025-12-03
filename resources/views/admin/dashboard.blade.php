@@ -905,7 +905,7 @@ function handleView(record) {
     const photoContainer = document.getElementById('viewPhoto');
     const memberPhoto = document.getElementById('memberPhoto');
     if (record.photo) {
-        memberPhoto.src = '/storage/' + record.photo;
+        memberPhoto.src = '/' + record.photo;
         photoContainer.style.display = 'flex';
     } else {
         photoContainer.style.display = 'none';
@@ -1262,7 +1262,7 @@ async function downloadPDF(record) {
     // Photo with border - MOVED LOWER
     if (record.photo) {
         try {
-            const imgData = await getBase64Image('/storage/' + record.photo);
+            const imgData = await getBase64Image('/' + record.photo);
             // Add border around photo
             doc.setDrawColor(200, 200, 200);
             doc.setLineWidth(0.5);
