@@ -845,112 +845,186 @@
 
     <script>
         // Modal and Action Handlers
-        function handleView(record) {
-            // Update photo if exists
-            const photoContainer = document.getElementById('viewPhoto');
-            const memberPhoto = document.getElementById('memberPhoto');
-            if (record.photo) {
-                memberPhoto.src = '/storage/' + record.photo;
-                photoContainer.style.display = 'flex';
-            } else {
-                photoContainer.style.display = 'none';
+function handleView(record) {
+    // Helper function to extract date only (YYYY-MM-DD) from date string
+    const extractDateOnly = (dateString) => {
+        if (!dateString) return '';
+        
+        try {
+            // Handle ISO date format (2016-04-17T00:00:00.000000Z)
+            if (typeof dateString === 'string') {
+                // Try to extract YYYY-MM-DD from ISO format
+                const isoMatch = dateString.match(/^(\d{4}-\d{2}-\d{2})T/);
+                if (isoMatch) {
+                    return isoMatch[1]; // Returns "2016-04-17"
+                }
+                
+                // Try to extract YYYY-MM-DD from any format
+                const dateMatch = dateString.match(/(\d{4}-\d{2}-\d{2})/);
+                if (dateMatch) {
+                    return dateMatch[1]; // Returns "2016-04-17"
+                }
+                
+                // Try to parse and format using Date object
+                const date = new Date(dateString);
+                if (!isNaN(date.getTime())) {
+                    // Format as YYYY-MM-DD
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                }
             }
-            
-            // Helper to parse JSON safely
-            const parseJson = (str) => {
-                try { return JSON.parse(str) || []; } catch(e) { return []; }
-            };
-
-            const watoto = parseJson(record.watoto);
-            const huduma = parseJson(record.huduma);
-            const kwaya = parseJson(record.kwaya);
-            const umoja = parseJson(record.umoja);
-
-            // Update content
-            document.getElementById('viewContent').innerHTML = `
-                <div>
-                    <h3 class="section-title">A. Tarifa Binafsi</h3>
-                    <div class="info-grid">
-                        <div class="info-item"><strong>Jina:</strong> <span>${record.jina || 'N/A'}</span></div>
-                        <div class="info-item"><strong>Jinsi:</strong> <span>${record.jinsi || 'N/A'}</span></div>
-                        <div class="info-item"><strong>Tarehe ya Kuzaliwa:</strong> <span>${record.tarehe_kuzaliwa || 'N/A'}</span></div>
-                        <div class="info-item"><strong>Mahali:</strong> <span>${record.mahali_kuzaliwa || 'N/A'}</span></div>
-                        <div class="info-item"><strong>Hali ya Ndoa:</strong> <span>${record.hali_ndoa || 'N/A'}</span></div>
-                        <div class="info-item"><strong>Mwenzi:</strong> <span>${record.jina_mwenzi || 'N/A'}</span></div>
-                        <div class="info-item"><strong>Aina ya Ndoa:</strong> <span>${record.aina_ndoa || 'N/A'}</span></div>
-                        <div class="info-item"><strong>Tarehe ya Ndoa:</strong> <span>${record.tarehe_ndoa || 'N/A'}</span></div>
-                    </div>
-                    ${watoto.length > 0 ? `
-                        <div style="margin-top: 10px;">
-                            <strong>Watoto:</strong>
-                            <ul style="padding-left: 20px; color: #6b7280; font-size: 14px;">
-                                ${watoto.map(m => `<li>${m.jina} (${m.tarehe_kuzaliwa}) - ${m.uhusiano}</li>`).join('')}
-                            </ul>
-                        </div>
-                    ` : ''}
-                </div>
-                
-                <div>
-                    <h3 class="section-title">B. Mawasiliano</h3>
-                    <div class="info-grid">
-                        <div class="info-item"><strong>Simu:</strong> <span>${record.simu || 'N/A'}</span></div>
-                        <div class="info-item"><strong>Simu ya Mwenzi:</strong> <span>${record.simu_mwenzi || 'N/A'}</span></div>
-                        <div class="info-item"><strong>Email:</strong> <span>${record.barua_pepe || 'N/A'}</span></div>
-                        <div class="info-item"><strong>Sanduku la Barua:</strong> <span>${record.sanduku_barua || 'N/A'}</span></div>
-                        <div class="info-item"><strong>Mtaa:</strong> <span>${record.mtaa || 'N/A'}</span></div>
-                        <div class="info-item"><strong>Eneo:</strong> <span>${record.jina_eneo || 'N/A'}</span></div>
-                        <div class="info-item"><strong>Namba ya Nyumba:</strong> <span>${record.namba_nyumba || 'N/A'}</span></div>
-                        <div class="info-item"><strong>Block No:</strong> <span>${record.block_no || 'N/A'}</span></div>
-                        <div class="info-item"><strong>Jirani:</strong> <span>${record.jirani_jina || 'N/A'} (${record.jirani_simu || 'N/A'})</span></div>
-                        <div class="info-item"><strong>Mzee wa Kanisa:</strong> <span>${record.mzee_kanisa || 'N/A'} (${record.simu_mzee || 'N/A'})</span></div>
-                    </div>
-                </div>
-                
-                <div>
-                    <h3 class="section-title">C. Elimu na Kazi</h3>
-                    <div class="info-grid">
-                        <div class="info-item"><strong>Kazi:</strong> <span>${record.kazi || 'N/A'}</span></div>
-                        <div class="info-item"><strong>Mahali pa Kazi:</strong> <span>${record.mahali_kazi || 'N/A'}</span></div>
-                        <div class="info-item"><strong>Elimu:</strong> <span>${record.elimu || 'N/A'}</span></div>
-                        <div class="info-item"><strong>Ujuzi:</strong> <span>${record.ujuzi || 'N/A'}</span></div>
-                    </div>
-                </div>
-                
-                <div>
-                    <h3 class="section-title">D. Huduma za Kiroho</h3>
-                    <div class="info-grid">
-                        <div class="info-item"><strong>Batizo:</strong> <span>${record.batizwa || 'N/A'}</span></div>
-                        <div class="info-item"><strong>Kipaimara:</strong> <span>${record.kipaimara || 'N/A'} (${record.tarehe_kipaimara || 'N/A'})</span></div>
-                        <div class="info-item"><strong>Meza ya Bwana:</strong> <span>${record.meza_bwana || 'N/A'}</span></div>
-                    </div>
-                </div>
-
-                <div>
-                    <h3 class="section-title">E. Ushiriki</h3>
-                    <div class="info-grid">
-                        <div class="info-item"><strong>Jumuiya:</strong> <span>${record.jumuiya || 'N/A'} (${record.jina_jumuiya || 'N/A'})</span></div>
-                        <div class="info-item"><strong>Sababu:</strong> <span>${record.sababu || 'N/A'}</span></div>
-                    </div>
-                    <div style="margin-top: 10px; font-size: 14px; color: #6b7280;">
-                        <strong>Huduma:</strong> ${huduma.join(', ') || 'N/A'}<br>
-                        <strong>Kwaya:</strong> ${kwaya.join(', ') || 'N/A'}<br>
-                        <strong>Umoja:</strong> ${umoja.join(', ') || 'N/A'}
-                    </div>
-                </div>
-
-                <div>
-                    <h3 class="section-title">F. Ahadi</h3>
-                    <div class="info-grid">
-                        <div class="info-item"><strong>Jengo:</strong> <span>${record.ahadi_jengo || '0'}</span></div>
-                        <div class="info-item"><strong>Uwakili:</strong> <span>${record.ahadi_uwakili || '0'}</span></div>
-                        <div class="info-item"><strong>Nyingine:</strong> <span>${record.ahadi_nyingine || '0'}</span></div>
-                        <div class="info-item"><strong>Namba ya Ahadi:</strong> <span>${record.namba_ahadi || 'N/A'} (${record.namba_ahadi_specific || 'N/A'})</span></div>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('viewModal').style.display = 'flex';
+        } catch (e) {
+            console.error("Error parsing date:", e);
         }
+        
+        // Return original if parsing fails
+        return dateString.toString();
+    };
+    
+    // Helper to extract year only from date
+    const extractYearOnly = (dateString) => {
+        if (!dateString) return '';
+        
+        try {
+            const date = new Date(dateString);
+            if (!isNaN(date.getTime())) {
+                return date.getFullYear().toString();
+            }
+        } catch (e) {
+            // Fallback: try to extract year from string
+            const yearMatch = dateString.match(/\b(\d{4})\b/);
+            return yearMatch ? yearMatch[1] : dateString;
+        }
+        
+        return dateString;
+    };
+    
+    // Update photo if exists
+    const photoContainer = document.getElementById('viewPhoto');
+    const memberPhoto = document.getElementById('memberPhoto');
+    if (record.photo) {
+        memberPhoto.src = '/storage/' + record.photo;
+        photoContainer.style.display = 'flex';
+    } else {
+        photoContainer.style.display = 'none';
+    }
+    
+    // Helper to parse JSON safely
+    const parseJson = (str) => {
+        try { return JSON.parse(str) || []; } catch(e) { return []; }
+    };
+
+    const watoto = parseJson(record.watoto);
+    const huduma = parseJson(record.huduma);
+    const kwaya = parseJson(record.kwaya);
+    const umoja = parseJson(record.umoja);
+
+    // Update content
+    document.getElementById('viewContent').innerHTML = `
+        <div>
+            <h3 class="section-title">A. Tarifa Binafsi</h3>
+            <div class="info-grid">
+                <div class="info-item"><strong>Jina:</strong> <span>${record.jina || 'N/A'}</span></div>
+                <div class="info-item"><strong>Jinsi:</strong> <span>${record.jinsi || 'N/A'}</span></div>
+                <div class="info-item"><strong>Tarehe ya Kuzaliwa:</strong> <span>${extractDateOnly(record.tarehe_kuzaliwa) || 'N/A'}</span></div>
+                <div class="info-item"><strong>Mahali:</strong> <span>${record.mahali_kuzaliwa || 'N/A'}</span></div>
+                <div class="info-item"><strong>Hali ya Ndoa:</strong> <span>${record.hali_ndoa || 'N/A'}</span></div>
+                <div class="info-item"><strong>Mwenzi:</strong> <span>${record.jina_mwenzi || 'N/A'}</span></div>
+                <div class="info-item"><strong>Aina ya Ndoa:</strong> <span>${record.aina_ndoa || 'N/A'}</span></div>
+                <div class="info-item"><strong>Tarehe ya Ndoa:</strong> <span>${extractDateOnly(record.tarehe_ndoa) || 'N/A'}</span></div>
+            </div>
+            ${watoto.length > 0 ? `
+                <div style="margin-top: 15px;">
+                    <strong style="display: block; margin-bottom: 8px;">Watoto/Waumini wanao kutegemea:</strong>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #4b5563;">
+                            <thead>
+                                <tr style="background-color: #3b82f6; color: white;">
+                                    <th style="padding: 8px 12px; text-align: left; border: 1px solid #e5e7eb;">#</th>
+                                    <th style="padding: 8px 12px; text-align: left; border: 1px solid #e5e7eb;">Jina Kamili</th>
+                                    <th style="padding: 8px 12px; text-align: left; border: 1px solid #e5e7eb;">Tarehe ya Kuzaliwa</th>
+                                    <th style="padding: 8px 12px; text-align: left; border: 1px solid #e5e7eb;">Uhusiano</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${watoto.map((m, index) => `
+                                    <tr style="${index % 2 === 0 ? 'background-color: #f9fafb;' : 'background-color: white;'}">
+                                        <td style="padding: 8px 12px; border: 1px solid #e5e7eb;">${index + 1}</td>
+                                        <td style="padding: 8px 12px; border: 1px solid #e5e7eb;">${m.jina || 'N/A'}</td>
+                                        <td style="padding: 8px 12px; border: 1px solid #e5e7eb;">${extractDateOnly(m.tarehe_kuzaliwa) || 'N/A'}</td>
+                                        <td style="padding: 8px 12px; border: 1px solid #e5e7eb;">${m.uhusiano || 'N/A'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            ` : ''}
+        </div>
+        
+        <div>
+            <h3 class="section-title">B. Mawasiliano</h3>
+            <div class="info-grid">
+                <div class="info-item"><strong>Simu:</strong> <span>${record.simu || 'N/A'}</span></div>
+                <div class="info-item"><strong>Simu ya Mwenzi:</strong> <span>${record.simu_mwenzi || 'N/A'}</span></div>
+                <div class="info-item"><strong>Email:</strong> <span>${record.barua_pepe || 'N/A'}</span></div>
+                <div class="info-item"><strong>Sanduku la Barua:</strong> <span>${record.sanduku_barua || 'N/A'}</span></div>
+                <div class="info-item"><strong>Mtaa:</strong> <span>${record.mtaa || 'N/A'}</span></div>
+                <div class="info-item"><strong>Eneo:</strong> <span>${record.jina_eneo || 'N/A'}</span></div>
+                <div class="info-item"><strong>Namba ya Nyumba:</strong> <span>${record.namba_nyumba || 'N/A'}</span></div>
+                <div class="info-item"><strong>Block No:</strong> <span>${record.block_no || 'N/A'}</span></div>
+                <div class="info-item"><strong>Jirani:</strong> <span>${record.jirani_jina || 'N/A'} (${record.jirani_simu || 'N/A'})</span></div>
+                <div class="info-item"><strong>Mzee wa Kanisa:</strong> <span>${record.mzee_kanisa || 'N/A'} (${record.simu_mzee || 'N/A'})</span></div>
+            </div>
+        </div>
+        
+        <div>
+            <h3 class="section-title">C. Elimu na Kazi</h3>
+            <div class="info-grid">
+                <div class="info-item"><strong>Kazi:</strong> <span>${record.kazi || 'N/A'}</span></div>
+                <div class="info-item"><strong>Mahali pa Kazi:</strong> <span>${record.mahali_kazi || 'N/A'}</span></div>
+                <div class="info-item"><strong>Elimu:</strong> <span>${record.elimu || 'N/A'}</span></div>
+                <div class="info-item"><strong>Ujuzi:</strong> <span>${record.ujuzi || 'N/A'}</span></div>
+            </div>
+        </div>
+        
+        <div>
+            <h3 class="section-title">D. Huduma za Kiroho</h3>
+            <div class="info-grid">
+                <div class="info-item"><strong>Batizo:</strong> <span>${record.batizwa || 'N/A'}</span></div>
+                <div class="info-item"><strong>Kipaimara:</strong> <span>${record.kipaimara || 'N/A'} ${record.tarehe_kipaimara ? `(${extractYearOnly(record.tarehe_kipaimara)})` : ''}</span></div>
+                <div class="info-item"><strong>Meza ya Bwana:</strong> <span>${record.meza_bwana || 'N/A'}</span></div>
+            </div>
+        </div>
+
+        <div>
+            <h3 class="section-title">E. Ushiriki</h3>
+            <div class="info-grid">
+                <div class="info-item"><strong>Jumuiya:</strong> <span>${record.jumuiya || 'N/A'} (${record.jina_jumuiya || 'N/A'})</span></div>
+                <div class="info-item"><strong>Sababu:</strong> <span>${record.sababu || 'N/A'}</span></div>
+            </div>
+            <div style="margin-top: 10px; font-size: 14px; color: #6b7280;">
+                <strong>Huduma:</strong> ${huduma.join(', ') || 'N/A'}<br>
+                <strong>Kwaya:</strong> ${kwaya.join(', ') || 'N/A'}<br>
+                <strong>Umoja:</strong> ${umoja.join(', ') || 'N/A'}
+            </div>
+        </div>
+
+        <div>
+            <h3 class="section-title">F. Ahadi</h3>
+            <div class="info-grid">
+                <div class="info-item"><strong>Jengo:</strong> <span>${record.ahadi_jengo || '0'}</span></div>
+                <div class="info-item"><strong>Uwakili:</strong> <span>${record.ahadi_uwakili || '0'}</span></div>
+                <div class="info-item"><strong>Nyingine:</strong> <span>${record.ahadi_nyingine || '0'}</span></div>
+                <div class="info-item"><strong>Namba ya Ahadi:</strong> <span>${record.namba_ahadi || 'N/A'} (${record.namba_ahadi_specific || 'N/A'})</span></div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('viewModal').style.display = 'flex';
+}
 
         function handleEdit(record) {
             // Fill form
