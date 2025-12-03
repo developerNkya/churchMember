@@ -35,19 +35,8 @@ class MemberController extends Controller
             'aina_ndoa' => 'nullable|in:Kikristo,Siyo Kikristo',
             'tarehe_ndoa' => 'nullable|date',
             
-            // Dependents
-            'jina_mtoto_1' => 'nullable|string|max:255',
-            'tarehe_mtoto_1' => 'nullable|date',
-            'uhusiano_mtoto_1' => 'nullable|string|max:100',
-            'jina_mtoto_2' => 'nullable|string|max:255',
-            'tarehe_mtoto_2' => 'nullable|date',
-            'uhusiano_mtoto_2' => 'nullable|string|max:100',
-            'jina_mtoto_3' => 'nullable|string|max:255',
-            'tarehe_mtoto_3' => 'nullable|date',
-            'uhusiano_mtoto_3' => 'nullable|string|max:100',
-            'jina_mtoto_4' => 'nullable|string|max:255',
-            'tarehe_mtoto_4' => 'nullable|date',
-            'uhusiano_mtoto_4' => 'nullable|string|max:100',
+            // Dependents (now sent as JSON)
+            'watoto' => 'nullable|json',
             
             // Section B
             'simu' => 'required|string|max:20',
@@ -97,17 +86,8 @@ class MemberController extends Controller
             'photo' => 'nullable|image|max:2048',
         ]);
 
-        // Process dependents
-        $watoto = [];
-        for ($i = 1; $i <= 4; $i++) {
-            if (!empty($request->input("jina_mtoto_$i"))) {
-                $watoto[] = [
-                    'jina' => $request->input("jina_mtoto_$i"),
-                    'tarehe_kuzaliwa' => $request->input("tarehe_mtoto_$i"),
-                    'uhusiano' => $request->input("uhusiano_mtoto_$i"),
-                ];
-            }
-        }
+        // Process dependents - watoto is now sent as JSON string from the form
+        $watotoJson = $validated['watoto'] ?? null;
 
         // Process photo upload
         $photoPath = null;
@@ -125,7 +105,7 @@ class MemberController extends Controller
             'jina_mwenzi' => $validated['jina_mwenzi'] ?? null,
             'aina_ndoa' => $validated['aina_ndoa'] ?? null,
             'tarehe_ndoa' => $validated['tarehe_ndoa'] ?? null,
-            'watoto' => !empty($watoto) ? json_encode($watoto) : null,
+            'watoto' => $watotoJson,
             'simu' => $validated['simu'],
             'simu_mwenzi' => $validated['simu_mwenzi'] ?? null,
             'sanduku_barua' => $validated['sanduku_barua'] ?? null,

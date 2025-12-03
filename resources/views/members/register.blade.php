@@ -86,6 +86,13 @@
             justify-content: center;
             margin: 0 auto;
             background-color: var(--light-color);
+            overflow: hidden;
+        }
+        
+        .photo-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
         h1 {
@@ -104,6 +111,10 @@
         
         .form-section {
             margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            background-color: #fafafa;
         }
         
         .form-group {
@@ -128,6 +139,7 @@
             border: 1px solid var(--border-color);
             border-radius: 4px;
             font-size: 16px;
+            background-color: white;
         }
         
         input:focus, select:focus, textarea:focus {
@@ -156,16 +168,41 @@
         }
         
         .checkbox-group, .radio-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 5px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 8px;
         }
         
         .checkbox-item, .radio-item {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            min-height: 44px;
+        }
+        
+        .checkbox-item:hover, .radio-item:hover {
+            background: #e9ecef;
+        }
+        
+        .checkbox-item input[type="checkbox"],
+        .radio-item input[type="radio"] {
+            width: auto;
+            margin-right: 8px;
+            flex-shrink: 0;
+            min-height: 20px;
+            min-width: 20px;
+        }
+        
+        .checkbox-item label,
+        .radio-item label {
+            margin-bottom: 0;
+            flex: 1;
+            cursor: pointer;
         }
         
         table {
@@ -185,12 +222,47 @@
         }
         
         table input {
-            border: none;
-            padding: 5px;
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            width: 100%;
         }
         
         table input:focus {
             outline: 2px solid var(--secondary-color);
+        }
+        
+        .add-child-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .add-child-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .remove-child-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .remove-child-btn:hover {
+            background-color: #c0392b;
         }
         
         .submit-btn {
@@ -205,6 +277,7 @@
             margin: 30px auto 0;
             transition: background-color 0.3s;
             min-width: 200px;
+            min-height: 50px;
         }
         
         .submit-btn:hover {
@@ -238,14 +311,33 @@
             margin-left: 20px;
         }
         
+        /* Conditional field animation */
+        .conditional-field {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        .conditional-field.visible {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Mobile Responsive Styles */
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
+                align-items: center;
+                text-align: center;
             }
             
             .photo-section {
                 margin-top: 20px;
                 width: 100%;
+                max-width: 200px;
             }
             
             .inline-group {
@@ -256,6 +348,97 @@
             .container {
                 padding: 15px;
             }
+            
+            .checkbox-group, .radio-group {
+                grid-template-columns: 1fr;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .form-section {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+            
+            label {
+                font-size: 14px;
+            }
+            
+            input, select, textarea {
+                font-size: 14px;
+                padding: 8px;
+            }
+            
+            h2 {
+                font-size: 18px;
+                margin: 15px 0 10px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            .form-group {
+                margin-bottom: 12px;
+            }
+            
+            .submit-btn {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .add-child-btn, .remove-child-btn {
+                width: 100%;
+                justify-content: center;
+                margin-top: 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 18px;
+            }
+            
+            h2 {
+                font-size: 16px;
+            }
+            
+            .photo-placeholder {
+                width: 100px;
+                height: 120px;
+            }
+            
+            th, td {
+                padding: 6px;
+                font-size: 12px;
+            }
+            
+            table input {
+                padding: 4px;
+                font-size: 12px;
+            }
+            
+            .back-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        /* Touch optimization */
+        input[type="checkbox"], 
+        input[type="radio"],
+        button,
+        select {
+            touch-action: manipulation;
         }
         
         .loading {
@@ -317,7 +500,7 @@
                     </div>
                 </div>
                 <div class="photo-section">
-                    <div class="photo-placeholder">
+                    <div class="photo-placeholder" id="photoPreview">
                         PICHA YA MSHARIKA
                     </div>
                     <input type="file" id="photo" name="photo" accept="image/*" style="margin-top: 10px; padding: 5px;">
@@ -408,7 +591,7 @@
                     @enderror
                 </div>
                 
-                <div class="form-group">
+                <div class="form-group" id="spouseNameGroup">
                     <label for="jina_mwenzi">6. Kama umeoa/kuolewa, taja jina la Mwenzi wako</label>
                     <input type="text" id="jina_mwenzi" name="jina_mwenzi" value="{{ old('jina_mwenzi') }}">
                     @error('jina_mwenzi')
@@ -419,7 +602,7 @@
                 <div class="form-group">
                     <label>7. Ndoa yako imefungwa?</label>
                     <div class="inline-group">
-                        <div class="radio-group">
+                        <div class="radio-group" style="display: flex; flex-wrap: wrap;">
                             <div class="radio-item">
                                 <input type="radio" id="ndoa_kikristo" name="aina_ndoa" value="Kikristo" {{ old('aina_ndoa') == 'Kikristo' ? 'checked' : '' }}>
                                 <label for="ndoa_kikristo">Kikristo</label>
@@ -429,7 +612,7 @@
                                 <label for="ndoa_siyo_kikristo">Siyo Kikristo</label>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group conditional-field" id="ndoaDateGroup">
                             <label for="tarehe_ndoa">Tarehe (DD/MM/YYYY)</label>
                             <input type="date" id="tarehe_ndoa" name="tarehe_ndoa" value="{{ old('tarehe_ndoa') }}">
                             @error('tarehe_ndoa')
@@ -444,42 +627,29 @@
                 
                 <div class="form-group">
                     <label>Watoto/Waumini wanao kutegemea</label>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Jina lake Kamili</th>
-                                <th>Tarehe ya Kuzaliwa</th>
-                                <th>Uhusiano</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td><input type="text" name="jina_mtoto_1" value="{{ old('jina_mtoto_1') }}"></td>
-                                <td><input type="date" name="tarehe_mtoto_1" value="{{ old('tarehe_mtoto_1') }}"></td>
-                                <td><input type="text" name="uhusiano_mtoto_1" value="{{ old('uhusiano_mtoto_1') }}"></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td><input type="text" name="jina_mtoto_2" value="{{ old('jina_mtoto_2') }}"></td>
-                                <td><input type="date" name="tarehe_mtoto_2" value="{{ old('tarehe_mtoto_2') }}"></td>
-                                <td><input type="text" name="uhusiano_mtoto_2" value="{{ old('uhusiano_mtoto_2') }}"></td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td><input type="text" name="jina_mtoto_3" value="{{ old('jina_mtoto_3') }}"></td>
-                                <td><input type="date" name="tarehe_mtoto_3" value="{{ old('tarehe_mtoto_3') }}"></td>
-                                <td><input type="text" name="uhusiano_mtoto_3" value="{{ old('uhusiano_mtoto_3') }}"></td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td><input type="text" name="jina_mtoto_4" value="{{ old('jina_mtoto_4') }}"></td>
-                                <td><input type="date" name="tarehe_mtoto_4" value="{{ old('tarehe_mtoto_4') }}"></td>
-                                <td><input type="text" name="uhusiano_mtoto_4" value="{{ old('uhusiano_mtoto_4') }}"></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div id="childrenTableContainer">
+                        <table id="childrenTable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Jina lake Kamili</th>
+                                    <th>Tarehe ya Kuzaliwa</th>
+                                    <th>Uhusiano</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="childrenTbody">
+                                <!-- Initial rows will be added here by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <input type="hidden" name="watoto" id="watotoJson" value="{{ old('watoto') }}">
+                    <button type="button" class="add-child-btn" id="addChildBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        Ongeza Mwengine
+                    </button>
                 </div>
             </div>
 
@@ -651,7 +821,7 @@
                 <div class="form-group">
                     <label>2. Ulishapata Kipaimara?</label>
                     <div class="inline-group">
-                        <div class="radio-group">
+                        <div class="radio-group" style="display: flex; flex-wrap: wrap;">
                             <div class="radio-item">
                                 <input type="radio" id="kipaimara_ndiyo" name="kipaimara" value="Ndiyo" {{ old('kipaimara') == 'Ndiyo' ? 'checked' : '' }}>
                                 <label for="kipaimara_ndiyo">Ndiyo</label>
@@ -661,7 +831,7 @@
                                 <label for="kipaimara_hapana">Hapana</label>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group conditional-field" id="kipaimaraDateGroup">
                             <label for="tarehe_kipaimara">Tarehe (DD/MM/YYYY)</label>
                             <input type="date" id="tarehe_kipaimara" name="tarehe_kipaimara" value="{{ old('tarehe_kipaimara') }}">
                             @error('tarehe_kipaimara')
@@ -699,7 +869,7 @@
                 <div class="form-group">
                     <label>Unashiriki ibada za nyumba kwa nyumba (Jumuiya)?</label>
                     <div class="inline-group">
-                        <div class="radio-group">
+                        <div class="radio-group" style="display: flex; flex-wrap: wrap;">
                             <div class="radio-item">
                                 <input type="radio" id="jumuiya_ndiyo" name="jumuiya" value="Ndiyo" {{ old('jumuiya') == 'Ndiyo' ? 'checked' : '' }}>
                                 <label for="jumuiya_ndiyo">Ndiyo</label>
@@ -709,7 +879,7 @@
                                 <label for="jumuiya_hapana">Hapana</label>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group conditional-field" id="jinaJumuiyaGroup">
                             <label for="jina_jumuiya">Jina la Jumuiya</label>
                             <input type="text" id="jina_jumuiya" name="jina_jumuiya" value="{{ old('jina_jumuiya') }}">
                             @error('jina_jumuiya')
@@ -717,7 +887,7 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group conditional-field" id="sababuGroup">
                         <label for="sababu">Sababu ya Kutoshiriki</label>
                         <input type="text" id="sababu" name="sababu" value="{{ old('sababu') }}">
                         @error('sababu')
@@ -853,7 +1023,7 @@
                 <div class="form-group">
                     <label>4. Je una Namba ya Ahadi?</label>
                     <div class="inline-group">
-                        <div class="radio-group">
+                        <div class="radio-group" style="display: flex; flex-wrap: wrap;">
                             <div class="radio-item">
                                 <input type="radio" id="namba_ahadi_ndiyo" name="namba_ahadi" value="Ndiyo" {{ old('namba_ahadi') == 'Ndiyo' ? 'checked' : '' }}>
                                 <label for="namba_ahadi_ndiyo">Ndiyo</label>
@@ -863,7 +1033,7 @@
                                 <label for="namba_ahadi_hapana">Hapana</label>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group conditional-field" id="nambaAhadiGroup">
                             <label for="namba_ahadi_specific">Namba ya ahadi kama unayo</label>
                             <input type="text" id="namba_ahadi_specific" name="namba_ahadi_specific" value="{{ old('namba_ahadi_specific') }}">
                             @error('namba_ahadi_specific')
@@ -885,121 +1055,379 @@
     </div>
 
     <script>
-        // Form validation
-        document.getElementById('registrationForm').addEventListener('submit', function(e) {
-            const submitBtn = document.getElementById('submitBtn');
-            const submitText = document.getElementById('submitText');
-            const loadingSpinner = document.getElementById('loadingSpinner');
-            
-            // Show loading state
-            submitBtn.disabled = true;
-            submitText.textContent = 'Inawasilisha...';
-            loadingSpinner.style.display = 'inline-block';
-            
-            // Validate required fields
-            const requiredFields = this.querySelectorAll('[required]');
-            let valid = true;
-            
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    field.classList.add('error');
-                    valid = false;
-                } else {
-                    field.classList.remove('error');
-                }
-            });
-            
-            // Validate radio groups
-            const requiredRadios = this.querySelectorAll('.radio-group');
-            requiredRadios.forEach(group => {
-                const name = group.querySelector('input[type="radio"]').name;
-                const checked = this.querySelector(`input[name="${name}"]:checked`);
-                if (!checked && group.closest('.form-group').querySelector('label').classList.contains('required')) {
-                    group.classList.add('error');
-                    valid = false;
-                } else {
-                    group.classList.remove('error');
-                }
-            });
-            
-            if (!valid) {
-                e.preventDefault();
-                alert('Tafadhali jaza sehemu zote zinazohitajika zilizo na alama ya *');
+        // Children/Dependants Management
+        class ChildrenManager {
+            constructor() {
+                this.children = [];
+                this.nextId = 1;
+                this.tbody = document.getElementById('childrenTbody');
+                this.jsonInput = document.getElementById('watotoJson');
+                this.addButton = document.getElementById('addChildBtn');
                 
-                // Reset button state
-                submitBtn.disabled = false;
-                submitText.textContent = 'Wasilisha Fomu';
-                loadingSpinner.style.display = 'none';
+                this.initialize();
             }
-        });
-
-        // Auto-format phone numbers
-        document.querySelectorAll('input[type="tel"]').forEach(input => {
-            input.addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, '');
-                if (value.length > 0) {
-                    value = value.match(/.{1,4}/g).join(' ');
+            
+            initialize() {
+                // Load existing children from old input if available
+                const oldWatoto = @json(old('watoto'));
+                if (oldWatoto) {
+                    try {
+                        const parsed = JSON.parse(oldWatoto);
+                        if (Array.isArray(parsed)) {
+                            parsed.forEach(child => {
+                                this.addChild(child);
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Error parsing old watoto data:', e);
+                    }
                 }
-                e.target.value = value;
-            });
-        });
-
-        // Date restrictions
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('tarehe_kuzaliwa').max = today;
-        document.getElementById('tarehe_ndoa').max = today;
-        document.getElementById('tarehe_kipaimara').max = today;
-        
-        for (let i = 1; i <= 4; i++) {
-            const dateField = document.querySelector(`input[name="tarehe_mtoto_${i}"]`);
-            if (dateField) {
-                dateField.max = today;
+                
+                // Add initial empty row if no children exist
+                if (this.children.length === 0) {
+                    this.addEmptyRow();
+                }
+                
+                // Add event listener for add button
+                this.addButton.addEventListener('click', () => this.addEmptyRow());
+                
+                // Update JSON when form submits
+                document.getElementById('registrationForm').addEventListener('submit', (e) => {
+                    this.updateJsonInput();
+                });
+            }
+            
+            addEmptyRow() {
+                this.addChild({
+                    jina: '',
+                    tarehe_kuzaliwa: '',
+                    uhusiano: ''
+                });
+            }
+            
+            addChild(childData) {
+                const child = {
+                    id: this.nextId++,
+                    jina: childData.jina || '',
+                    tarehe_kuzaliwa: childData.tarehe_kuzaliwa || '',
+                    uhusiano: childData.uhusiano || ''
+                };
+                
+                this.children.push(child);
+                this.renderTable();
+                return child;
+            }
+            
+            removeChild(childId) {
+                this.children = this.children.filter(child => child.id !== childId);
+                this.renderTable();
+                
+                // If no children left, add an empty row
+                if (this.children.length === 0) {
+                    this.addEmptyRow();
+                }
+            }
+            
+            updateChild(childId, field, value) {
+                const child = this.children.find(c => c.id === childId);
+                if (child) {
+                    child[field] = value;
+                    this.updateJsonInput();
+                }
+            }
+            
+            renderTable() {
+                this.tbody.innerHTML = '';
+                
+                this.children.forEach((child, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>
+                            <input type="text" 
+                                   class="child-jina" 
+                                   data-child-id="${child.id}"
+                                   value="${this.escapeHtml(child.jina)}"
+                                   placeholder="Jina la mtoto">
+                        </td>
+                        <td>
+                            <input type="date" 
+                                   class="child-date" 
+                                   data-child-id="${child.id}"
+                                   value="${child.tarehe_kuzaliwa}"
+                                   max="${new Date().toISOString().split('T')[0]}">
+                        </td>
+                        <td>
+                            <input type="text" 
+                                   class="child-uhusiano" 
+                                   data-child-id="${child.id}"
+                                   value="${this.escapeHtml(child.uhusiano)}"
+                                   placeholder="Uhusiano">
+                        </td>
+                        <td>
+                            <button type="button" class="remove-child-btn" data-child-id="${child.id}">
+                                Ondoa
+                            </button>
+                        </td>
+                    `;
+                    
+                    this.tbody.appendChild(row);
+                    
+                    // Add event listeners for inputs
+                    row.querySelector('.child-jina').addEventListener('input', (e) => {
+                        this.updateChild(child.id, 'jina', e.target.value);
+                    });
+                    
+                    row.querySelector('.child-date').addEventListener('change', (e) => {
+                        this.updateChild(child.id, 'tarehe_kuzaliwa', e.target.value);
+                    });
+                    
+                    row.querySelector('.child-uhusiano').addEventListener('input', (e) => {
+                        this.updateChild(child.id, 'uhusiano', e.target.value);
+                    });
+                    
+                    // Add event listener for remove button
+                    row.querySelector('.remove-child-btn').addEventListener('click', () => {
+                        this.removeChild(child.id);
+                    });
+                });
+                
+                this.updateJsonInput();
+            }
+            
+            updateJsonInput() {
+                // Filter out empty children
+                const nonEmptyChildren = this.children.filter(child => 
+                    child.jina.trim() || child.tarehe_kuzaliwa || child.uhusiano.trim()
+                );
+                
+                this.jsonInput.value = JSON.stringify(nonEmptyChildren);
+            }
+            
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
             }
         }
 
-        // Auto-show/hide spouse name based on marital status
-        const maritalStatusRadios = document.querySelectorAll('input[name="hali_ndoa"]');
-        const spouseNameField = document.getElementById('jina_mwenzi');
-        
-        function toggleSpouseName() {
-            const selectedValue = document.querySelector('input[name="hali_ndoa"]:checked')?.value;
-            if (selectedValue === 'Umeoa' || selectedValue === 'Umeolewa') {
-                spouseNameField.required = true;
-                spouseNameField.closest('.form-group').querySelector('label').classList.add('required');
-            } else {
-                spouseNameField.required = false;
-                spouseNameField.closest('.form-group').querySelector('label').classList.remove('required');
-            }
-        }
-        
-        maritalStatusRadios.forEach(radio => {
-            radio.addEventListener('change', toggleSpouseName);
-        });
-        
-        // Initialize on page load
-        toggleSpouseName();
-
-        // Handle file upload size validation
-        document.getElementById('photo').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const maxSize = 2 * 1024 * 1024; // 2MB
-                if (file.size > maxSize) {
-                    alert('Faili ni kubwa sana. Tafadhali chagua faili ndogo kuliko 2MB.');
-                    e.target.value = '';
-                }
-                
-                // Validate file type
-                const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-                if (!validTypes.includes(file.type)) {
-                    alert('Aina ya faili haikubaliki. Tafadhali chagua picha ya aina JPG au PNG.');
-                    e.target.value = '';
-                }
-            }
-        });
-
-        // Restore form state from old input
+        // Main script
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Children Manager
+            const childrenManager = new ChildrenManager();
+            
+            // Form validation
+            document.getElementById('registrationForm').addEventListener('submit', function(e) {
+                const submitBtn = document.getElementById('submitBtn');
+                const submitText = document.getElementById('submitText');
+                const loadingSpinner = document.getElementById('loadingSpinner');
+                
+                // Show loading state
+                submitBtn.disabled = true;
+                submitText.textContent = 'Inawasilisha...';
+                loadingSpinner.style.display = 'inline-block';
+                
+                // Validate required fields
+                const requiredFields = this.querySelectorAll('[required]');
+                let valid = true;
+                
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        field.classList.add('error');
+                        valid = false;
+                    } else {
+                        field.classList.remove('error');
+                    }
+                });
+                
+                // Validate radio groups
+                const requiredRadios = this.querySelectorAll('.radio-group');
+                requiredRadios.forEach(group => {
+                    const name = group.querySelector('input[type="radio"]').name;
+                    const checked = this.querySelector(`input[name="${name}"]:checked`);
+                    if (!checked && group.closest('.form-group').querySelector('label').classList.contains('required')) {
+                        group.classList.add('error');
+                        valid = false;
+                    } else {
+                        group.classList.remove('error');
+                    }
+                });
+                
+                if (!valid) {
+                    e.preventDefault();
+                    alert('Tafadhali jaza sehemu zote zinazohitajika zilizo na alama ya *');
+                    
+                    // Reset button state
+                    submitBtn.disabled = false;
+                    submitText.textContent = 'Wasilisha Fomu';
+                    loadingSpinner.style.display = 'none';
+                }
+            });
+
+            // Auto-format phone numbers
+            document.querySelectorAll('input[type="tel"]').forEach(input => {
+                input.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 0) {
+                        value = value.match(/.{1,4}/g).join(' ');
+                    }
+                    e.target.value = value;
+                });
+            });
+
+            // Date restrictions
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('tarehe_kuzaliwa').max = today;
+            document.getElementById('tarehe_ndoa').max = today;
+            document.getElementById('tarehe_kipaimara').max = today;
+
+            // Conditional Fields Functions
+            function toggleSpouseName() {
+                const selectedValue = document.querySelector('input[name="hali_ndoa"]:checked')?.value;
+                const spouseGroup = document.getElementById('spouseNameGroup');
+                const spouseLabel = spouseGroup.querySelector('label');
+                const spouseInput = document.getElementById('jina_mwenzi');
+                
+                if (selectedValue === 'Umeoa' || selectedValue === 'Umeolewa') {
+                    spouseGroup.style.display = 'block';
+                    spouseLabel.classList.add('required');
+                    spouseInput.required = true;
+                } else {
+                    spouseGroup.style.display = 'none';
+                    spouseLabel.classList.remove('required');
+                    spouseInput.required = false;
+                    spouseInput.value = '';
+                }
+            }
+
+            function toggleNdoaDate() {
+                const selectedValue = document.querySelector('input[name="aina_ndoa"]:checked')?.value;
+                const ndoaDateGroup = document.getElementById('ndoaDateGroup');
+                const ndoaDateInput = document.getElementById('tarehe_ndoa');
+                
+                if (selectedValue === 'Kikristo' || selectedValue === 'Siyo Kikristo') {
+                    ndoaDateGroup.classList.add('visible');
+                    ndoaDateInput.required = true;
+                } else {
+                    ndoaDateGroup.classList.remove('visible');
+                    ndoaDateInput.required = false;
+                    ndoaDateInput.value = '';
+                }
+            }
+
+            function toggleKipaimaraDate() {
+                const selectedValue = document.querySelector('input[name="kipaimara"]:checked')?.value;
+                const kipaimaraDateGroup = document.getElementById('kipaimaraDateGroup');
+                const kipaimaraDateInput = document.getElementById('tarehe_kipaimara');
+                
+                if (selectedValue === 'Ndiyo') {
+                    kipaimaraDateGroup.classList.add('visible');
+                    kipaimaraDateInput.required = true;
+                } else {
+                    kipaimaraDateGroup.classList.remove('visible');
+                    kipaimaraDateInput.required = false;
+                    kipaimaraDateInput.value = '';
+                }
+            }
+
+            function toggleJumuiyaFields() {
+                const selectedValue = document.querySelector('input[name="jumuiya"]:checked')?.value;
+                const jinaJumuiyaGroup = document.getElementById('jinaJumuiyaGroup');
+                const sababuGroup = document.getElementById('sababuGroup');
+                const jinaJumuiyaInput = document.getElementById('jina_jumuiya');
+                const sababuInput = document.getElementById('sababu');
+                
+                if (selectedValue === 'Ndiyo') {
+                    jinaJumuiyaGroup.classList.add('visible');
+                    sababuGroup.classList.remove('visible');
+                    jinaJumuiyaInput.required = true;
+                    sababuInput.required = false;
+                    sababuInput.value = '';
+                } else if (selectedValue === 'Hapana') {
+                    jinaJumuiyaGroup.classList.remove('visible');
+                    sababuGroup.classList.add('visible');
+                    jinaJumuiyaInput.required = false;
+                    jinaJumuiyaInput.value = '';
+                    sababuInput.required = true;
+                } else {
+                    jinaJumuiyaGroup.classList.remove('visible');
+                    sababuGroup.classList.remove('visible');
+                    jinaJumuiyaInput.required = false;
+                    sababuInput.required = false;
+                }
+            }
+
+            function toggleNambaAhadiField() {
+                const selectedValue = document.querySelector('input[name="namba_ahadi"]:checked')?.value;
+                const nambaAhadiGroup = document.getElementById('nambaAhadiGroup');
+                const nambaAhadiInput = document.getElementById('namba_ahadi_specific');
+                
+                if (selectedValue === 'Ndiyo') {
+                    nambaAhadiGroup.classList.add('visible');
+                    nambaAhadiInput.required = true;
+                } else {
+                    nambaAhadiGroup.classList.remove('visible');
+                    nambaAhadiInput.required = false;
+                    nambaAhadiInput.value = '';
+                }
+            }
+
+            // Add event listeners for conditional fields
+            document.querySelectorAll('input[name="hali_ndoa"]').forEach(radio => {
+                radio.addEventListener('change', toggleSpouseName);
+            });
+
+            document.querySelectorAll('input[name="aina_ndoa"]').forEach(radio => {
+                radio.addEventListener('change', toggleNdoaDate);
+            });
+
+            document.querySelectorAll('input[name="kipaimara"]').forEach(radio => {
+                radio.addEventListener('change', toggleKipaimaraDate);
+            });
+
+            document.querySelectorAll('input[name="jumuiya"]').forEach(radio => {
+                radio.addEventListener('change', toggleJumuiyaFields);
+            });
+
+            document.querySelectorAll('input[name="namba_ahadi"]').forEach(radio => {
+                radio.addEventListener('change', toggleNambaAhadiField);
+            });
+
+            // Handle file upload
+            document.getElementById('photo').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                const preview = document.getElementById('photoPreview');
+                
+                if (file) {
+                    const maxSize = 2 * 1024 * 1024; // 2MB
+                    if (file.size > maxSize) {
+                        alert('Faili ni kubwa sana. Tafadhali chagua faili ndogo kuliko 2MB.');
+                        e.target.value = '';
+                        preview.innerHTML = 'PICHA YA MSHARIKA';
+                        return;
+                    }
+                    
+                    // Validate file type
+                    const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                    if (!validTypes.includes(file.type)) {
+                        alert('Aina ya faili haikubaliki. Tafadhali chagua picha ya aina JPG au PNG.');
+                        e.target.value = '';
+                        preview.innerHTML = 'PICHA YA MSHARIKA';
+                        return;
+                    }
+                    
+                    // Preview image
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    preview.innerHTML = 'PICHA YA MSHARIKA';
+                }
+            });
+
+            // Restore form state from old input
             const oldInputs = @json(old());
 
             // Handle checkboxes for arrays
@@ -1013,6 +1441,26 @@
                     }
                 }
             });
+            
+            // Initialize all conditional fields
+            toggleSpouseName();
+            toggleNdoaDate();
+            toggleKipaimaraDate();
+            toggleJumuiyaFields();
+            toggleNambaAhadiField();
+
+            // Mobile-specific optimizations
+            function isMobile() {
+                return window.innerWidth <= 768;
+            }
+
+            if (isMobile()) {
+                // Increase touch target size
+                const interactiveElements = document.querySelectorAll('input, select, button, .checkbox-item, .radio-item');
+                interactiveElements.forEach(el => {
+                    el.style.minHeight = '44px';
+                });
+            }
         });
     </script>
 </body>
