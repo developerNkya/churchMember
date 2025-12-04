@@ -51,6 +51,7 @@ class AdminController extends Controller
         }
 
         $members = $query->paginate(10);
+
         return view('admin.dashboard', compact('members'));
     }
 

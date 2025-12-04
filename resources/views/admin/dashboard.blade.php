@@ -853,6 +853,7 @@
 
     <script>
         // Modal and Action Handlers
+// Modal and Action Handlers
 function handleView(record) {
     // Helper function to extract date only (YYYY-MM-DD) from date string
     const extractDateOnly = (dateString) => {
@@ -928,6 +929,122 @@ function handleView(record) {
     const huduma = parseJson(record.huduma);
     const kwaya = parseJson(record.kwaya);
     const umoja = parseJson(record.umoja);
+    const otherPledges = parseJson(record.other_pledges);
+
+    // Build pledges table HTML
+    let pledgesTableHtml = '';
+    let totalAhadi = 0;
+    
+    if (otherPledges && otherPledges.length > 0) {
+        // Show dynamic pledges from other_pledges field
+        pledgesTableHtml = `
+            <div style="overflow-x: auto; margin-top: 15px;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #4b5563; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+                    <thead>
+                        <tr style="background-color: #3b82f6; color: white;">
+                            <th style="padding: 12px; text-align: left; border: 1px solid #2563eb; font-weight: 600;">#</th>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #2563eb; font-weight: 600;">Aina ya Ahadi</th>
+                            <th style="padding: 12px; text-align: right; border: 1px solid #2563eb; font-weight: 600;">Kiasi (TZS)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        otherPledges.forEach((pledge, index) => {
+            if (pledge.name && pledge.amount) {
+                const amount = parseFloat(pledge.amount) || 0;
+                totalAhadi += amount;
+                
+                pledgesTableHtml += `
+                    <tr style="${index % 2 === 0 ? 'background-color: #f9fafb;' : 'background-color: white;'}">
+                        <td style="padding: 12px; border: 1px solid #e5e7eb; font-weight: 500;">${index + 1}</td>
+                        <td style="padding: 12px; border: 1px solid #e5e7eb;">${pledge.name}</td>
+                        <td style="padding: 12px; border: 1px solid #e5e7eb; text-align: right; font-weight: 500;">${amount.toLocaleString('en-US')}</td>
+                    </tr>
+                `;
+            }
+        });
+        
+        // Add total row
+        pledgesTableHtml += `
+                    </tbody>
+                    <tfoot>
+                        <tr style="background-color: #f0f9ff; border-top: 2px solid #3b82f6;">
+                            <td colspan="2" style="padding: 14px 12px; text-align: right; border: 1px solid #e5e7eb; font-weight: 700; color: #1e40af;">JUMLA YA AHADI:</td>
+                            <td style="padding: 14px 12px; text-align: right; border: 1px solid #e5e7eb; font-weight: 700; color: #1e40af; font-size: 15px;">${totalAhadi.toLocaleString('en-US')} TZS</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        `;
+    } else {
+        // Fallback to old fields (for backward compatibility)
+        const oldPledges = [
+            { name: 'Jengo', value: record.ahadi_jengo },
+            { name: 'Uwakili', value: record.ahadi_uwakili },
+            { name: 'Nyingine', value: record.ahadi_nyingine }
+        ];
+        
+        const validOldPledges = oldPledges.filter(pledge => {
+            const value = parseFloat(pledge.value) || 0;
+            return value > 0;
+        });
+        
+        if (validOldPledges.length > 0) {
+            pledgesTableHtml = `
+                <div style="overflow-x: auto; margin-top: 15px;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #4b5563; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+                        <thead>
+                            <tr style="background-color: #3b82f6; color: white;">
+                                <th style="padding: 12px; text-align: left; border: 1px solid #2563eb; font-weight: 600;">#</th>
+                                <th style="padding: 12px; text-align: left; border: 1px solid #2563eb; font-weight: 600;">Aina ya Ahadi</th>
+                                <th style="padding: 12px; text-align: right; border: 1px solid #2563eb; font-weight: 600;">Kiasi (TZS)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            validOldPledges.forEach((pledge, index) => {
+                const amount = parseFloat(pledge.value) || 0;
+                totalAhadi += amount;
+                
+                pledgesTableHtml += `
+                    <tr style="${index % 2 === 0 ? 'background-color: #f9fafb;' : 'background-color: white;'}">
+                        <td style="padding: 12px; border: 1px solid #e5e7eb; font-weight: 500;">${index + 1}</td>
+                        <td style="padding: 12px; border: 1px solid #e5e7eb;">${pledge.name}</td>
+                        <td style="padding: 12px; border: 1px solid #e5e7eb; text-align: right; font-weight: 500;">${amount.toLocaleString('en-US')}</td>
+                    </tr>
+                `;
+            });
+            
+            // Add total row
+            pledgesTableHtml += `
+                        </tbody>
+                        <tfoot>
+                            <tr style="background-color: #f0f9ff; border-top: 2px solid #3b82f6;">
+                                <td colspan="2" style="padding: 14px 12px; text-align: right; border: 1px solid #e5e7eb; font-weight: 700; color: #1e40af;">JUMLA YA AHADI:</td>
+                                <td style="padding: 14px 12px; text-align: right; border: 1px solid #e5e7eb; font-weight: 700; color: #1e40af; font-size: 15px;">${totalAhadi.toLocaleString('en-US')} TZS</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            `;
+        } else {
+            pledgesTableHtml = `
+                <div style="text-align: center; padding: 20px; background-color: #f9fafb; border: 1px dashed #d1d5db; border-radius: 8px; margin-top: 15px;">
+                    <span style="color: #6b7280; font-style: italic;">Hakuna ahadi zilizowekwa</span>
+                </div>
+            `;
+        }
+    }
+    
+    // Ahadi number information
+    const ahadiNumberHtml = record.namba_ahadi ? `
+        <div style="margin-top: 15px; padding: 12px; background-color: #f0f9ff; border: 1px solid #bfdbfe; border-radius: 6px;">
+            <strong style="color: #1e40af;">Namba ya Ahadi:</strong> 
+            <span style="color: #374151; margin-left: 8px;">${record.namba_ahadi} ${record.namba_ahadi_specific ? `(${record.namba_ahadi_specific})` : ''}</span>
+        </div>
+    ` : '';
 
     // Update content
     document.getElementById('viewContent').innerHTML = `
@@ -947,22 +1064,22 @@ function handleView(record) {
                 <div style="margin-top: 15px;">
                     <strong style="display: block; margin-bottom: 8px;">Watoto/Waumini wanao kutegemea:</strong>
                     <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #4b5563;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #4b5563; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
                             <thead>
                                 <tr style="background-color: #3b82f6; color: white;">
-                                    <th style="padding: 8px 12px; text-align: left; border: 1px solid #e5e7eb;">#</th>
-                                    <th style="padding: 8px 12px; text-align: left; border: 1px solid #e5e7eb;">Jina Kamili</th>
-                                    <th style="padding: 8px 12px; text-align: left; border: 1px solid #e5e7eb;">Tarehe ya Kuzaliwa</th>
-                                    <th style="padding: 8px 12px; text-align: left; border: 1px solid #e5e7eb;">Uhusiano</th>
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #2563eb; font-weight: 600;">#</th>
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #2563eb; font-weight: 600;">Jina Kamili</th>
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #2563eb; font-weight: 600;">Tarehe ya Kuzaliwa</th>
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #2563eb; font-weight: 600;">Uhusiano</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 ${watoto.map((m, index) => `
                                     <tr style="${index % 2 === 0 ? 'background-color: #f9fafb;' : 'background-color: white;'}">
-                                        <td style="padding: 8px 12px; border: 1px solid #e5e7eb;">${index + 1}</td>
-                                        <td style="padding: 8px 12px; border: 1px solid #e5e7eb;">${m.jina || 'N/A'}</td>
-                                        <td style="padding: 8px 12px; border: 1px solid #e5e7eb;">${extractDateOnly(m.tarehe_kuzaliwa) || 'N/A'}</td>
-                                        <td style="padding: 8px 12px; border: 1px solid #e5e7eb;">${m.uhusiano || 'N/A'}</td>
+                                        <td style="padding: 12px; border: 1px solid #e5e7eb; font-weight: 500;">${index + 1}</td>
+                                        <td style="padding: 12px; border: 1px solid #e5e7eb;">${m.jina || 'N/A'}</td>
+                                        <td style="padding: 12px; border: 1px solid #e5e7eb;">${extractDateOnly(m.tarehe_kuzaliwa) || 'N/A'}</td>
+                                        <td style="padding: 12px; border: 1px solid #e5e7eb;">${m.uhusiano || 'N/A'}</td>
                                     </tr>
                                 `).join('')}
                             </tbody>
@@ -1013,21 +1130,26 @@ function handleView(record) {
                 <div class="info-item"><strong>Jumuiya:</strong> <span>${record.jumuiya || 'N/A'} (${record.jina_jumuiya || 'N/A'})</span></div>
                 <div class="info-item"><strong>Sababu:</strong> <span>${record.sababu || 'N/A'}</span></div>
             </div>
-            <div style="margin-top: 10px; font-size: 14px; color: #6b7280;">
-                <strong>Huduma:</strong> ${huduma.join(', ') || 'N/A'}<br>
-                <strong>Kwaya:</strong> ${kwaya.join(', ') || 'N/A'}<br>
-                <strong>Umoja:</strong> ${umoja.join(', ') || 'N/A'}
+            <div style="margin-top: 15px; padding: 15px; background-color: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb;">
+                <div style="margin-bottom: 8px;">
+                    <strong style="color: #374151; display: inline-block; min-width: 80px;">Huduma:</strong>
+                    <span style="color: #6b7280;">${huduma.join(', ') || 'N/A'}</span>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <strong style="color: #374151; display: inline-block; min-width: 80px;">Kwaya:</strong>
+                    <span style="color: #6b7280;">${kwaya.join(', ') || 'N/A'}</span>
+                </div>
+                <div>
+                    <strong style="color: #374151; display: inline-block; min-width: 80px;">Umoja:</strong>
+                    <span style="color: #6b7280;">${umoja.join(', ') || 'N/A'}</span>
+                </div>
             </div>
         </div>
 
         <div>
             <h3 class="section-title">F. Ahadi</h3>
-            <div class="info-grid">
-                <div class="info-item"><strong>Jengo:</strong> <span>${record.ahadi_jengo || '0'}</span></div>
-                <div class="info-item"><strong>Uwakili:</strong> <span>${record.ahadi_uwakili || '0'}</span></div>
-                <div class="info-item"><strong>Nyingine:</strong> <span>${record.ahadi_nyingine || '0'}</span></div>
-                <div class="info-item"><strong>Namba ya Ahadi:</strong> <span>${record.namba_ahadi || 'N/A'} (${record.namba_ahadi_specific || 'N/A'})</span></div>
-            </div>
+            ${pledgesTableHtml}
+            ${ahadiNumberHtml}
         </div>
     `;
     
