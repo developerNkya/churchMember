@@ -532,7 +532,7 @@
                         @forelse($members as $index => $member)
                         <tr>
                             <td>{{ $members->firstItem() + $index }}</td>
-                            <td>{{ $member->jina }}</td>
+                            <td>{{ $member->first_name }} {{ $member->middle_name }} {{ $member->last_name }}</td>
                             <td>{{ $member->jinsi }}</td>
                             <td>{{ $member->simu }}</td>
                             <td>{{ $member->mtaa }}</td>
@@ -621,8 +621,16 @@
                     
                     <!-- Section A -->
                     <div class="form-group">
-                        <label for="edit_jina" class="form-label">Jina la Msharika</label>
-                        <input type="text" id="edit_jina" name="jina" class="form-input" required>
+                        <label for="edit_first_name" class="form-label">Jina la Kwanza</label>
+                        <input type="text" id="edit_first_name" name="first_name" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_middle_name" class="form-label">Jina la Kati</label>
+                        <input type="text" id="edit_middle_name" name="middle_name" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_last_name" class="form-label">Jina la Mwisho</label>
+                        <input type="text" id="edit_last_name" name="last_name" class="form-input" required>
                     </div>
                     <div class="form-group">
                         <label for="edit_jinsi" class="form-label">Jinsi</label>
@@ -926,7 +934,7 @@ function handleView(record) {
         <div>
             <h3 class="section-title">A. Tarifa Binafsi</h3>
             <div class="info-grid">
-                <div class="info-item"><strong>Jina:</strong> <span>${record.jina || 'N/A'}</span></div>
+                <div class="info-item"><strong>Jina:</strong> <span>${(record.first_name || '') + ' ' + (record.middle_name || '') + ' ' + (record.last_name || '') || 'N/A'}</span></div>
                 <div class="info-item"><strong>Jinsi:</strong> <span>${record.jinsi || 'N/A'}</span></div>
                 <div class="info-item"><strong>Tarehe ya Kuzaliwa:</strong> <span>${extractDateOnly(record.tarehe_kuzaliwa) || 'N/A'}</span></div>
                 <div class="info-item"><strong>Mahali:</strong> <span>${record.mahali_kuzaliwa || 'N/A'}</span></div>
@@ -1029,7 +1037,7 @@ function handleView(record) {
         function handleEdit(record) {
             // Fill form
             const fields = [
-                'jina', 'jinsi', 'tarehe_kuzaliwa', 'mahali_kuzaliwa', 'hali_ndoa', 'jina_mwenzi', 'aina_ndoa', 'tarehe_ndoa',
+                'first_name', 'middle_name', 'last_name', 'jinsi', 'tarehe_kuzaliwa', 'mahali_kuzaliwa', 'hali_ndoa', 'jina_mwenzi', 'aina_ndoa', 'tarehe_ndoa',
                 'simu', 'simu_mwenzi', 'barua_pepe', 'sanduku_barua', 'mtaa', 'namba_nyumba', 'jina_eneo', 'block_no', 'jirani_jina', 'jirani_simu', 'mzee_kanisa', 'simu_mzee',
                 'kazi', 'mahali_kazi', 'elimu', 'ujuzi',
                 'batizwa', 'kipaimara', 'tarehe_kipaimara', 'meza_bwana',

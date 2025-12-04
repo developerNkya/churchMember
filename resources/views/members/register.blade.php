@@ -512,14 +512,32 @@
             <div class="form-section">
                 <h2>A. TARIFA BINAFSI</h2>
                 
+                
+                <div class="form-group">
+                    <label for="first_name" class="required">1. Jina la Kwanza</label>
+                    <input type="text" id="first_name" name="first_name" value="{{ old('first_name') }}" required>
+                    @error('first_name')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+                
+                <div class="form-group">
+                    <label for="middle_name">Jina la Kati (Optional)</label>
+                    <input type="text" id="middle_name" name="middle_name" value="{{ old('middle_name') }}">
+                    @error('middle_name')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+                
+                <div class="form-group">
+                    <label for="last_name" class="required">Jina la Mwisho</label>
+                    <input type="text" id="last_name" name="last_name" value="{{ old('last_name') }}" required>
+                    @error('last_name')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+                
                 <div class="inline-group">
-                    <div class="form-group">
-                        <label for="jina" class="required">1. Jina la Msharika</label>
-                        <input type="text" id="jina" name="jina" value="{{ old('jina') }}" required>
-                        @error('jina')
-                            <div class="error-message">{{ $message }}</div>
-                        @enderror
-                    </div>
                     <div class="form-group">
                         <label for="jinsi" class="required">2. Jinsi (Me/Ke)</label>
                         <select id="jinsi" name="jinsi" required>
@@ -1020,6 +1038,33 @@
                     <div class="error-message">{{ $message }}</div>
                 @enderror
                 
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Ahadi Nyingine (kama ipo)</label>
+                    <div id="pledgesTableContainer">
+                        <table id="pledgesTable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Jina la Ahadi</th>
+                                    <th>Kiasi (TZS)</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pledgesTbody">
+                                <!-- Rows added by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <input type="hidden" name="other_pledges" id="pledgesJson" value="{{ old('other_pledges') }}">
+                    <button type="button" class="add-child-btn" id="addPledgeBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        Ongeza Ahadi Nyingine
+                    </button>
+                </div>
+                
+                
                 <div class="form-group">
                     <label>4. Je una Namba ya Ahadi?</label>
                     <div class="inline-group">
@@ -1211,10 +1256,161 @@
             }
         }
 
+        // Pledges Manager (similar to ChildrenManager)
+        class PledgesManager {
+            constructor() {
+                this.pledges = [];
+                this.nextId = 1;
+                this.tbody = document.getElementById('pledgesTbody');
+                this.jsonInput = document.getElementById('pledgesJson');
+                this.addButton = document.getElementById('addPledgeBtn');
+                
+                this.initialize();
+            }
+            
+            initialize() {
+                // Load existing pledges from old input if available
+                const oldPledges = @json(old('other_pledges'));
+                if (oldPledges) {
+                    try {
+                        const parsed = typeof oldPledges === 'string' ? JSON.parse(oldPledges) : oldPledges;
+                        if (Array.isArray(parsed)) {
+                            parsed.forEach(pledge => {
+                                this.addPledge(pledge);
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Error parsing old pledges data:', e);
+                    }
+                }
+                
+                // Add initial empty row if no pledges exist
+                if (this.pledges.length === 0) {
+                    this.addEmptyRow();
+                }
+                
+                // Add event listener for add button
+                this.addButton.addEventListener('click', () => this.addEmptyRow());
+                
+                // Update JSON when form submits
+                document.getElementById('registrationForm').addEventListener('submit', (e) => {
+                    this.updateJsonInput();
+                });
+            }
+            
+            addEmptyRow() {
+                this.addPledge({
+                    name: '',
+                    amount: ''
+                });
+            }
+            
+            addPledge(pledgeData) {
+                const pledge = {
+                    id: this.nextId++,
+                    name: pledgeData.name || '',
+                    amount: pledgeData.amount || ''
+                };
+                
+                this.pledges.push(pledge);
+                this.renderTable();
+                return pledge;
+            }
+            
+            removePledge(pledgeId) {
+                this.pledges = this.pledges.filter(pledge => pledge.id !== pledgeId);
+                this.renderTable();
+                
+                // If no pledges left, add an empty row
+                if (this.pledges.length === 0) {
+                    this.addEmptyRow();
+                }
+            }
+            
+            updatePledge(pledgeId, field, value) {
+                const pledge = this.pledges.find(p => p.id === pledgeId);
+                if (pledge) {
+                    pledge[field] = value;
+                    this.updateJsonInput();
+                }
+            }
+            
+            renderTable() {
+                this.tbody.innerHTML = '';
+                
+                this.pledges.forEach((pledge, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>
+                            <input type="text" 
+                                   class="pledge-name" 
+                                   data-pledge-id="${pledge.id}"
+                                   value="${this.escapeHtml(pledge.name)}"
+                                   placeholder="Jina la ahadi">
+                        </td>
+                        <td>
+                            <input type="number" 
+                                   class="pledge-amount" 
+                                   data-pledge-id="${pledge.id}"
+                                   value="${pledge.amount}"
+                                   placeholder="Kiasi"
+                                   min="0"
+                                   step="1000">
+                        </td>
+                        <td>
+                            <button type="button" class="remove-child-btn" data-pledge-id="${pledge.id}">
+                                Ondoa
+                            </button>
+                        </td>
+                    `;
+                    
+                    this.tbody.appendChild(row);
+                    
+                    // Add event listeners for inputs
+                    row.querySelector('.pledge-name').addEventListener('input', (e) => {
+                        this.updatePledge(pledge.id, 'name', e.target.value);
+                    });
+                    
+                    row.querySelector('.pledge-amount').addEventListener('input', (e) => {
+                        this.updatePledge(pledge.id, 'amount', e.target.value);
+                    });
+                    
+                    // Add event listener for remove button
+                    row.querySelector('.remove-child-btn').addEventListener('click', () => {
+                        this.removePledge(pledge.id);
+                    });
+                });
+                
+                this.updateJsonInput();
+            }
+            
+            updateJsonInput() {
+                // Filter out empty pledges
+                const nonEmptyPledges = this.pledges.filter(pledge => 
+                    pledge.name.trim() !== '' || pledge.amount !== ''
+                );
+                
+                this.jsonInput.value = JSON.stringify(nonEmptyPledges.map(p => ({
+                    name: p.name,
+                    amount: p.amount
+                })));
+            }
+            
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
         // Main script
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize Children Manager
             const childrenManager = new ChildrenManager();
+            
+            // Initialize Pledges Manager
+            const pledgesManager = new PledgesManager();
             
             // Form validation
             document.getElementById('registrationForm').addEventListener('submit', function(e) {

@@ -41,7 +41,9 @@ class AdminController extends Controller
         if ($request->has('search')) {
             $search = $request->get('search');
             $query->where(function($q) use ($search) {
-                $q->where('jina', 'like', "%{$search}%")
+                $q->where('first_name', 'like', "%{$search}%")
+                  ->orWhere('middle_name', 'like', "%{$search}%")
+                  ->orWhere('last_name', 'like', "%{$search}%")
                   ->orWhere('simu', 'like', "%{$search}%")
                   ->orWhere('mtaa', 'like', "%{$search}%")
                   ->orWhere('kazi', 'like', "%{$search}%");
@@ -55,7 +57,8 @@ class AdminController extends Controller
     public function logout()
     {
         session()->forget('admin_logged_in');
-        return redirect()->route('admin.login')->with('success', 'Umetoka kwenye mfumo.');
+        session()->flush();
+        return redirect()->route('home')->with('success', 'Umetoka kwenye mfumo.');
     }
 
     public function update(Request $request, $id)
@@ -67,7 +70,9 @@ class AdminController extends Controller
         $member = Member::findOrFail($id);
         
         $validated = $request->validate([
-            'jina' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name' => 'required|string|max:255',
             'jinsi' => 'required|in:Me,Ke',
             'tarehe_kuzaliwa' => 'required|date',
             'mahali_kuzaliwa' => 'required|string|max:255',
@@ -114,6 +119,7 @@ class AdminController extends Controller
             'ahadi_jengo' => 'nullable|numeric|min:0',
             'ahadi_uwakili' => 'nullable|numeric|min:0',
             'ahadi_nyingine' => 'nullable|numeric|min:0',
+            'other_pledges' => 'nullable|array',
             'namba_ahadi' => 'nullable|in:Ndiyo,Hapana',
             'namba_ahadi_specific' => 'nullable|string|max:100',
         ]);

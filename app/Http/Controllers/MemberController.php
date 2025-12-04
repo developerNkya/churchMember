@@ -25,8 +25,10 @@ class MemberController extends Controller
     {
         // Validate the request
         $validated = $request->validate([
-            // Section A
-            'jina' => 'required|string|max:255',
+            // Section A - Updated name fields
+            'first_name' => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name' => 'required|string|max:255',
             'jinsi' => 'required|in:Me,Ke',
             'tarehe_kuzaliwa' => 'required|date',
             'mahali_kuzaliwa' => 'required|string|max:255',
@@ -75,10 +77,11 @@ class MemberController extends Controller
             'umoja' => 'nullable|array',
             'umoja.*' => 'string',
             
-            // Section F
+            // Section F - Updated with other_pledges
             'ahadi_jengo' => 'nullable|numeric|min:0',
             'ahadi_uwakili' => 'nullable|numeric|min:0',
             'ahadi_nyingine' => 'nullable|numeric|min:0',
+            'other_pledges' => 'nullable|json',
             'namba_ahadi' => 'nullable|in:Ndiyo,Hapana',
             'namba_ahadi_specific' => 'nullable|string|max:100',
             
@@ -88,6 +91,9 @@ class MemberController extends Controller
 
         // Process dependents - watoto is now sent as JSON string from the form
         $watotoJson = $validated['watoto'] ?? null;
+        
+        // Process other_pledges - sent as JSON string from the form
+        $otherPledgesJson = $validated['other_pledges'] ?? null;
 
         // Process photo upload - save to public directory
         $photoPath = null;
@@ -108,7 +114,9 @@ class MemberController extends Controller
 
         // Prepare data for database
         $memberData = [
-            'jina' => $validated['jina'],
+            'first_name' => $validated['first_name'],
+            'middle_name' => $validated['middle_name'] ?? null,
+            'last_name' => $validated['last_name'],
             'jinsi' => $validated['jinsi'],
             'tarehe_kuzaliwa' => $validated['tarehe_kuzaliwa'],
             'mahali_kuzaliwa' => $validated['mahali_kuzaliwa'],
@@ -146,6 +154,7 @@ class MemberController extends Controller
             'ahadi_jengo' => $validated['ahadi_jengo'] ?? 0,
             'ahadi_uwakili' => $validated['ahadi_uwakili'] ?? 0,
             'ahadi_nyingine' => $validated['ahadi_nyingine'] ?? 0,
+            'other_pledges' => $otherPledgesJson,
             'namba_ahadi' => $validated['namba_ahadi'] ?? null,
             'namba_ahadi_specific' => $validated['namba_ahadi_specific'] ?? null,
             'photo' => $photoPath,
