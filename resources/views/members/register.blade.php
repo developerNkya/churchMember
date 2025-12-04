@@ -1002,41 +1002,8 @@
             <div class="form-section">
                 <h2>F. AHADI YAKO KWA BWANA MWAKA 2026</h2>
                 
-                <table>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Jina la Ahadi</th>
-                            <th>Kiasi kwa mwaka (Tshs.)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Jengo</td>
-                            <td><input type="number" name="ahadi_jengo" min="0" value="{{ old('ahadi_jengo') }}"></td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Uwakili</td>
-                            <td><input type="number" name="ahadi_uwakili" min="0" value="{{ old('ahadi_uwakili') }}"></td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Ahadinyingine kama ipo</td>
-                            <td><input type="number" name="ahadi_nyingine" min="0" value="{{ old('ahadi_nyingine') }}"></td>
-                        </tr>
-                    </tbody>
-                </table>
-                @error('ahadi_jengo')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-                @error('ahadi_uwakili')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-                @error('ahadi_nyingine')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
+                <!-- Static Ahadi table removed -->
+
                 
                 <div class="form-group" style="margin-top: 20px;">
                     <label>Ahadi Nyingine (kama ipo)</label>
@@ -1284,9 +1251,11 @@
                     }
                 }
                 
-                // Add initial empty row if no pledges exist
+                // Add default pledges if no pledges exist (fresh form)
                 if (this.pledges.length === 0) {
-                    this.addEmptyRow();
+                    this.addPledge({ name: 'Jengo', amount: '' });
+                    this.addPledge({ name: 'Uwakili', amount: '' });
+                    this.addPledge({ name: '', amount: '' }); // Extra empty row for 'Ahadi Nyingine'
                 }
                 
                 // Add event listener for add button

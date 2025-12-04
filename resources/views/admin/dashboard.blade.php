@@ -1285,7 +1285,10 @@ async function downloadPDF(record) {
     addSection('A. TARIFA BINAFSI');
     
     // Use addLabeledText for fields that might have long values
-    addLabeledText('Jina la Msharika', record.jina);
+    const fullName =
+    `${record.first_name || ''} ${record.middle_name || ''} ${record.last_name || ''}`.trim() || 'N/A';
+
+    addLabeledText('Jina la Msharika', fullName);
     addLabeledText('Jinsi', record.jinsi);
     addLabeledText('Tarehe ya Kuzaliwa', record.tarehe_kuzaliwa);
     addLabeledText('Mahali Kuzaliwa', record.mahali_kuzaliwa);
@@ -1545,7 +1548,24 @@ async function downloadPDF(record) {
     
     addAmount('Ahadi ya Jengo', record.ahadi_jengo);
     addAmount('Ahadi ya Uwakili', record.ahadi_uwakili);
-    addAmount('Ahadi Nyingine', record.ahadi_nyingine);
+    addAmount('Ahadi Nyingine (Old)', record.ahadi_nyingine);
+    
+    // Add dynamic other pledges
+    const otherPledges = parseJson(record.other_pledges);
+    if (otherPledges.length > 0) {
+        yPos += 5;
+        checkPageBreak(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Ahadi Nyingine / Mpya:', 15, yPos);
+        yPos += 7;
+        
+        otherPledges.forEach(pledge => {
+            if (pledge.name || pledge.amount) {
+                addAmount(pledge.name || 'Ahadi', pledge.amount);
+            }
+        });
+    }
+
     
     if (record.namba_ahadi) {
         const ahadiInfo = `${record.namba_ahadi} (${record.namba_ahadi_specific || ''})`;
