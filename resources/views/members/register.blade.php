@@ -1255,7 +1255,6 @@
                 if (this.pledges.length === 0) {
                     this.addPledge({ name: 'Jengo', amount: '' });
                     this.addPledge({ name: 'Uwakili', amount: '' });
-                    this.addPledge({ name: '', amount: '' }); // Extra empty row for 'Ahadi Nyingine'
                 }
                 
                 // Add event listener for add button
@@ -1290,9 +1289,10 @@
                 this.pledges = this.pledges.filter(pledge => pledge.id !== pledgeId);
                 this.renderTable();
                 
-                // If no pledges left, add an empty row
+                // If no pledges left, add default ones back? Or just empty?
+                // User wants Jengo/Uwakili to be default, so maybe prevent removing them is better.
                 if (this.pledges.length === 0) {
-                    this.addEmptyRow();
+                   // this.addEmptyRow(); 
                 }
             }
             
@@ -1308,6 +1308,7 @@
                 this.tbody.innerHTML = '';
                 
                 this.pledges.forEach((pledge, index) => {
+                    const isDefault = pledge.name === 'Jengo' || pledge.name === 'Uwakili';
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${index + 1}</td>
@@ -1316,7 +1317,8 @@
                                    class="pledge-name" 
                                    data-pledge-id="${pledge.id}"
                                    value="${this.escapeHtml(pledge.name)}"
-                                   placeholder="Jina la ahadi">
+                                   placeholder="Jina la ahadi"
+                                   ${isDefault ? 'readonly style="background-color: #f3f4f6;"' : ''}>
                         </td>
                         <td>
                             <input type="number" 
@@ -1328,27 +1330,33 @@
                                    step="1000">
                         </td>
                         <td>
+                            ${!isDefault ? `
                             <button type="button" class="remove-child-btn" data-pledge-id="${pledge.id}">
                                 Ondoa
                             </button>
+                            ` : ''}
                         </td>
                     `;
                     
                     this.tbody.appendChild(row);
                     
                     // Add event listeners for inputs
-                    row.querySelector('.pledge-name').addEventListener('input', (e) => {
-                        this.updatePledge(pledge.id, 'name', e.target.value);
-                    });
+                    if (!isDefault) {
+                        row.querySelector('.pledge-name').addEventListener('input', (e) => {
+                            this.updatePledge(pledge.id, 'name', e.target.value);
+                        });
+                    }
                     
                     row.querySelector('.pledge-amount').addEventListener('input', (e) => {
                         this.updatePledge(pledge.id, 'amount', e.target.value);
                     });
                     
                     // Add event listener for remove button
-                    row.querySelector('.remove-child-btn').addEventListener('click', () => {
-                        this.removePledge(pledge.id);
-                    });
+                    if (!isDefault) {
+                        row.querySelector('.remove-child-btn').addEventListener('click', () => {
+                            this.removePledge(pledge.id);
+                        });
+                    }
                 });
                 
                 this.updateJsonInput();
