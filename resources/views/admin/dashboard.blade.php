@@ -1427,7 +1427,17 @@ function handleView(record) {
                     'Accept': 'application/json'
                 }
             })
-            .then(response => response.json())
+            .then(async response => {
+                const data = await response.json();
+                if (!response.ok) {
+                    if (response.status === 422) {
+                        const errorMessages = Object.values(data.errors).flat().join('\n');
+                        throw new Error(errorMessages);
+                    }
+                    throw new Error(data.message || 'Hitilafu imetokea.');
+                }
+                return data;
+            })
             .then(data => {
                 if (data.success) {
                     showToast(data.message, 'success');
@@ -1439,7 +1449,7 @@ function handleView(record) {
             })
             .catch(error => {
                 console.error('Error:', error);
-                showToast('Hitilafu ya mtandao.', 'error');
+                showToast(error.message || 'Hitilafu ya mtandao.', 'error');
             });
         }
 
