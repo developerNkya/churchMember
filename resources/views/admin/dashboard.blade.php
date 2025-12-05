@@ -640,57 +640,11 @@
             
             .table-container {
                 border-radius: 6px;
-                background: transparent;
-                box-shadow: none;
-                padding: 0;
             }
             
-            /* Hide standard table headers */
-            .data-table thead {
-                display: none;
-            }
-            
-            .data-table, .data-table tbody, .data-table tr, .data-table td {
-                display: block;
-                width: 100%;
-            }
-            
-            .data-table tr {
-                background: white;
-                border-radius: 8px;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                margin-bottom: 16px;
-                padding: 16px;
-                border: 1px solid #e5e7eb;
-            }
-            
-            .data-table td {
-                padding: 8px 0;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                text-align: right;
-                border-bottom: 1px solid #f3f4f6;
-            }
-            
-            .data-table td:last-child {
-                border-bottom: none;
-                padding-top: 16px;
-                justify-content: flex-end;
-                gap: 8px;
-            }
-            
-            .data-table td::before {
-                content: attr(data-label);
-                font-weight: 600;
-                color: #6b7280;
-                text-align: left;
-                margin-right: 16px;
-            }
-            
-            /* Show hidden columns on mobile for card view */
-            .hidden-mobile {
-                display: flex !important;
+            .data-table td,
+            .data-table th {
+                padding: 12px;
             }
 
             .modal-header {
