@@ -1673,7 +1673,14 @@ async function downloadPDF(record) {
     }
     
     // Children Section - Clean and Simple
+    // Children Section - Clean and Simple
     const watoto = parseJson(record.watoto);
+    
+    // Fix overlap with photo if it exists
+    if (record.photo && yPos < 110) {
+        yPos = 110;
+    }
+    
     if (watoto.length > 0) {
         checkPageBreak(15);
         
@@ -1904,34 +1911,83 @@ async function downloadPDF(record) {
     // ========== SECTION F: AHADI ==========
     addSection('F. AHADI');
     
-    // Function to add amounts with proper formatting
-    const addAmount = (label, value) => {
-        // Skip if value is 0, "0", null, undefined, or empty string
-        if (!value || value == 0 || value === '0') return;
-        
-        checkPageBreak(6);
-        doc.setFont('helvetica', 'bold');
-        doc.text(`${label}:`, 15, yPos);
-        doc.setFont('helvetica', 'normal');
-        doc.text(`${Number(value).toLocaleString('en-US')} TZS`, 60, yPos);
-        yPos += 6;
-    };
-    
-    // Add pledges
+    // Add pledges as table
     const otherPledges = parseJson(record.other_pledges);
+    let validPledges = [];
     
+    // 1. Try dynamic pledges first
     if (otherPledges.length > 0) {
-        // Use dynamic pledges if available (includes Jengo/Uwakili)
-        otherPledges.forEach(pledge => {
-            if (pledge.name || pledge.amount) {
-                addAmount(pledge.name || 'Ahadi', pledge.amount);
-            }
+        validPledges = otherPledges.filter(p => p.name && (p.amount || p.amount === 0 || p.amount === '0'));
+    }
+    
+    // 2. If no dynamic pledges, try legacy fields
+    if (validPledges.length === 0) {
+        if (record.ahadi_jengo > 0) validPledges.push({name: 'Ahadi ya Jengo', amount: record.ahadi_jengo});
+        if (record.ahadi_uwakili > 0) validPledges.push({name: 'Ahadi ya Uwakili', amount: record.ahadi_uwakili});
+        if (record.ahadi_nyingine > 0) validPledges.push({name: 'Ahadi Nyingine', amount: record.ahadi_nyingine});
+    }
+    
+    if (validPledges.length > 0) {
+        checkPageBreak(15);
+        yPos += 5;
+        
+        // Table Header
+        const colHeaders = ['SN', 'AINA YA AHADI', 'KIASI'];
+        const colX = [20, 45, 140];
+        
+        doc.setFillColor(...primaryColor);
+        doc.rect(15, yPos - 5, 180, 7, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        
+        colHeaders.forEach((header, i) => {
+            doc.text(header, colX[i], yPos);
         });
+        
+        yPos += 8;
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        
+        let totalAhadi = 0;
+        
+        validPledges.forEach((pledge, index) => {
+            checkPageBreak(7);
+            
+            // Alternate row color
+            if (index % 2 === 0) {
+                doc.setFillColor(...lightGray);
+                doc.rect(15, yPos - 4, 180, 6, 'F');
+            }
+            
+            const amount = Number(pledge.amount) || 0;
+            totalAhadi += amount;
+            
+            doc.text(`${index + 1}.`, colX[0], yPos);
+            doc.text(pledge.name || '-', colX[1], yPos);
+            doc.text(`${amount.toLocaleString('en-US')} TZS`, colX[2], yPos);
+            
+            yPos += 7;
+        });
+        
+        // Total Row
+        yPos += 2;
+        doc.setDrawColor(...primaryColor);
+        doc.setLineWidth(0.5);
+        doc.line(15, yPos, 195, yPos);
+        yPos += 6;
+        
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(...primaryColor);
+        doc.text('JUMLA KUU:', 100, yPos);
+        doc.text(`${totalAhadi.toLocaleString('en-US')} TZS`, 140, yPos);
+        
+        yPos += 5;
     } else {
-        // Fallback to legacy fields
-        addAmount('Ahadi ya Jengo', record.ahadi_jengo);
-        addAmount('Ahadi ya Uwakili', record.ahadi_uwakili);
-        addAmount('Ahadi Nyingine', record.ahadi_nyingine);
+        doc.setFont('helvetica', 'italic');
+        doc.setTextColor(100, 100, 100);
+        doc.text('Hakuna ahadi zilizowekwa.', 20, yPos);
+        yPos += 6;
     }
 
     
