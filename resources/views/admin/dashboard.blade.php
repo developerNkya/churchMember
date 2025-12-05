@@ -262,14 +262,7 @@
         }
 
         /* Mobile-friendly table cells */
-        @media (max-width: 640px) {
-            .data-table th:nth-child(6),
-            .data-table td:nth-child(6),
-            .data-table th:nth-child(7),
-            .data-table td:nth-child(7) {
-                display: none;
-            }
-        }
+
 
         .actions-cell {
             text-align: right;
@@ -647,13 +640,59 @@
             
             .table-container {
                 border-radius: 6px;
+                background: transparent;
+                box-shadow: none;
+                padding: 0;
             }
             
-            .data-table td,
-            .data-table th {
-                padding: 12px;
+            /* Hide standard table headers */
+            .data-table thead {
+                display: none;
             }
             
+            .data-table, .data-table tbody, .data-table tr, .data-table td {
+                display: block;
+                width: 100%;
+            }
+            
+            .data-table tr {
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                margin-bottom: 16px;
+                padding: 16px;
+                border: 1px solid #e5e7eb;
+            }
+            
+            .data-table td {
+                padding: 8px 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                text-align: right;
+                border-bottom: 1px solid #f3f4f6;
+            }
+            
+            .data-table td:last-child {
+                border-bottom: none;
+                padding-top: 16px;
+                justify-content: flex-end;
+                gap: 8px;
+            }
+            
+            .data-table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #6b7280;
+                text-align: left;
+                margin-right: 16px;
+            }
+            
+            /* Show hidden columns on mobile for card view */
+            .hidden-mobile {
+                display: flex !important;
+            }
+
             .modal-header {
                 padding: 16px 16px 12px;
             }
@@ -860,14 +899,14 @@
                     <tbody>
                         @forelse($members as $index => $member)
                         <tr>
-                            <td>{{ $members->firstItem() + $index }}</td>
-                            <td>{{ $member->first_name }} {{ $member->middle_name }} {{ $member->last_name }}</td>
-                            <td>{{ $member->jinsi }}</td>
-                            <td>{{ $member->simu }}</td>
-                            <td>{{ $member->mtaa }}</td>
-                            <td class="hidden-mobile">{{ $member->kazi }}</td>
-                            <td class="hidden-mobile">{{ $member->created_at->format('d/m/Y') }}</td>
-                            <td class="actions-cell">
+                            <td data-label="#">{{ $members->firstItem() + $index }}</td>
+                            <td data-label="Jina">{{ $member->first_name }} {{ $member->middle_name }} {{ $member->last_name }}</td>
+                            <td data-label="Jinsi">{{ $member->jinsi }}</td>
+                            <td data-label="Simu">{{ $member->simu }}</td>
+                            <td data-label="Mtaa">{{ $member->mtaa }}</td>
+                            <td class="hidden-mobile" data-label="Kazi">{{ $member->kazi }}</td>
+                            <td class="hidden-mobile" data-label="Tarehe">{{ $member->created_at->format('d/m/Y') }}</td>
+                            <td class="actions-cell" data-label="Vitendo">
                                 <div class="actions-container">
                                     <button class="action-btn" onclick="handleView(@js($member))" title="Angalia" aria-label="Angalia taarifa za msharika">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

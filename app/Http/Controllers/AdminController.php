@@ -44,6 +44,7 @@ class AdminController extends Controller
                 $q->where('first_name', 'like', "%{$search}%")
                   ->orWhere('middle_name', 'like', "%{$search}%")
                   ->orWhere('last_name', 'like', "%{$search}%")
+                  ->orWhereRaw("CONCAT(first_name, ' ', middle_name, ' ', last_name) LIKE ?", ["%{$search}%"])
                   ->orWhere('simu', 'like', "%{$search}%")
                   ->orWhere('mtaa', 'like', "%{$search}%")
                   ->orWhere('kazi', 'like', "%{$search}%");
