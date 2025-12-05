@@ -988,11 +988,11 @@ function handleView(record) {
         try { return JSON.parse(str) || []; } catch(e) { return []; }
     };
 
-    const watoto = parseJson(record.watoto);
-    const huduma = parseJson(record.huduma);
-    const kwaya = parseJson(record.kwaya);
-    const umoja = parseJson(record.umoja);
-    const otherPledges = parseJson(record.other_pledges);
+    const watoto = ensureArray(record.watoto);
+    const huduma = ensureArray(record.huduma);
+    const kwaya = ensureArray(record.kwaya);
+    const umoja = ensureArray(record.umoja);
+    const otherPledges = ensureArray(record.other_pledges);
 
     // Build pledges table HTML
     let pledgesTableHtml = '';
@@ -1490,9 +1490,9 @@ async function downloadPDF(record) {
     const accentColor = [231, 76, 60]; // Red
     const lightGray = [241, 242, 246];
     
-    // Helper to parse JSON
-    const parseJson = (str) => {
-        try { return JSON.parse(str) || []; } catch(e) { return []; }
+    // Helper to parse JSON or return array
+    const parseJson = (data) => {
+        return ensureArray(data);
     };
     
     // Helper to format date to just year
@@ -1917,24 +1917,21 @@ async function downloadPDF(record) {
         yPos += 6;
     };
     
-    addAmount('Ahadi ya Jengo', record.ahadi_jengo);
-    addAmount('Ahadi ya Uwakili', record.ahadi_uwakili);
-    addAmount('Ahadi Nyingine (Old)', record.ahadi_nyingine);
-    
-    // Add dynamic other pledges
+    // Add pledges
     const otherPledges = parseJson(record.other_pledges);
+    
     if (otherPledges.length > 0) {
-        yPos += 5;
-        checkPageBreak(10);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Ahadi Nyingine / Mpya:', 15, yPos);
-        yPos += 7;
-        
+        // Use dynamic pledges if available (includes Jengo/Uwakili)
         otherPledges.forEach(pledge => {
             if (pledge.name || pledge.amount) {
                 addAmount(pledge.name || 'Ahadi', pledge.amount);
             }
         });
+    } else {
+        // Fallback to legacy fields
+        addAmount('Ahadi ya Jengo', record.ahadi_jengo);
+        addAmount('Ahadi ya Uwakili', record.ahadi_uwakili);
+        addAmount('Ahadi Nyingine', record.ahadi_nyingine);
     }
 
     
