@@ -23,6 +23,16 @@ class MemberController extends Controller
      */
     public function store(Request $request)
     {
+        // Check for duplicates before validation to save resources
+        $exists = Member::where('first_name', $request->first_name)
+            ->where('last_name', $request->last_name)
+            ->where('simu', $request->simu)
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors(['error' => 'Mwanachama huyu tayari amesajiliwa.'])->withInput();
+        }
+
         // Validate the request
         $validated = $request->validate([
             // Section A - Updated name fields

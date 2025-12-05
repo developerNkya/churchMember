@@ -460,6 +460,39 @@
             border-color: #4f46e5;
         }
 
+        @media (max-width: 640px) {
+            .modal-content {
+                width: 95%;
+                margin: 10px;
+                max-height: 90vh;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .pledge-item-grid {
+                grid-template-columns: 1fr !important;
+                gap: 15px !important;
+            }
+            
+            .pledge-item-grid > div:last-child {
+                justify-self: end;
+            }
+        }
+        
+        .pledge-item-grid {
+            display: grid; 
+            grid-template-columns: 1fr 1fr 40px; 
+            gap: 10px; 
+            align-items: end; 
+            margin-bottom: 10px; 
+            background: #f9fafb; 
+            padding: 10px; 
+            border-radius: 6px; 
+            border: 1px solid #e5e7eb;
+        }
+
         .pagination-link.disabled {
             color: #9ca3af;
             cursor: not-allowed;
@@ -799,7 +832,7 @@
                         <label class="form-label" style="font-weight: 600; color: #374151; margin-bottom: 15px;">AHADI ZAKO</label>
                         
                         <!-- Fixed Jengo Ahadi (Non-removable) -->
-                        <div class="pledge-item" style="display: grid; grid-template-columns: 1fr 1fr 40px; gap: 10px; align-items: end; margin-bottom: 10px; background: #f0f9ff; padding: 10px; border-radius: 6px; border: 1px solid #bfdbfe;">
+                        <div class="pledge-item-grid">
                             <div>
                                 <label style="font-size: 12px; color: #4b5563; margin-bottom: 4px; display: block;">Jina la Ahadi</label>
                                 <input type="text" 
@@ -826,7 +859,7 @@
                         </div>
                         
                         <!-- Fixed Uwakili Ahadi (Non-removable) -->
-                        <div class="pledge-item" style="display: grid; grid-template-columns: 1fr 1fr 40px; gap: 10px; align-items: end; margin-bottom: 10px; background: #f0f9ff; padding: 10px; border-radius: 6px; border: 1px solid #bfdbfe;">
+                        <div class="pledge-item-grid">
                             <div>
                                 <label style="font-size: 12px; color: #4b5563; margin-bottom: 4px; display: block;">Jina la Ahadi</label>
                                 <input type="text" 
@@ -1275,8 +1308,8 @@ function handleView(record) {
             const index = container.children.length + 2; // +2 for fixed Jengo and Uwakili
             
             const div = document.createElement('div');
-            div.className = 'pledge-item';
-            div.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr 40px; gap: 10px; align-items: end; margin-bottom: 10px; background: #f9fafb; padding: 10px; border-radius: 6px; border: 1px solid #e5e7eb;';
+            div.className = 'pledge-item pledge-item-grid';
+            // div.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr 40px; gap: 10px; align-items: end; margin-bottom: 10px; background: #f9fafb; padding: 10px; border-radius: 6px; border: 1px solid #e5e7eb;';
             
             div.innerHTML = `
                 <div>
@@ -1990,6 +2023,10 @@ async function downloadPDF(record) {
         yPos += 6;
     }
 
+
+
+    // Add extra space before Namba ya Ahadi to prevent overlap with Jumla
+    yPos += 5;
     
     if (record.namba_ahadi) {
         const ahadiInfo = `${record.namba_ahadi} (${record.namba_ahadi_specific || ''})`;
