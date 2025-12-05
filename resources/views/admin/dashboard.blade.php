@@ -650,7 +650,7 @@
                     </div>
                     <div class="form-group">
                         <label for="edit_hali_ndoa" class="form-label">Hali ya Ndoa</label>
-                        <select id="edit_hali_ndoa" name="hali_ndoa" class="form-select" required>
+                        <select id="edit_hali_ndoa" name="hali_ndoa" class="form-select" required onchange="toggleMarriageFields()">
                             <option value="">Chagua</option>
                             <option value="Umeoa">Umeoa</option>
                             <option value="Hujaoa">Hujaoa</option>
@@ -662,11 +662,11 @@
                             <option value="Tengana">Tengana</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group marriage-field">
                         <label for="edit_jina_mwenzi" class="form-label">Jina la Mwenzi</label>
                         <input type="text" id="edit_jina_mwenzi" name="jina_mwenzi" class="form-input">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group marriage-field">
                         <label for="edit_aina_ndoa" class="form-label">Aina ya Ndoa</label>
                         <select id="edit_aina_ndoa" name="aina_ndoa" class="form-select">
                             <option value="">Chagua</option>
@@ -674,7 +674,7 @@
                             <option value="Siyo Kikristo">Siyo Kikristo</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group marriage-field">
                         <label for="edit_tarehe_ndoa" class="form-label">Tarehe ya Ndoa</label>
                         <input type="date" id="edit_tarehe_ndoa" name="tarehe_ndoa" class="form-input">
                     </div>
@@ -684,7 +684,7 @@
                         <label for="edit_simu" class="form-label">Namba ya Simu</label>
                         <input type="tel" id="edit_simu" name="simu" class="form-input" required>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group marriage-field">
                         <label for="edit_simu_mwenzi" class="form-label">Simu ya Mwenzi</label>
                         <input type="tel" id="edit_simu_mwenzi" name="simu_mwenzi" class="form-input">
                     </div>
@@ -757,13 +757,13 @@
                     </div>
                     <div class="form-group">
                         <label for="edit_kipaimara" class="form-label">Umepata Kipaimara?</label>
-                        <select id="edit_kipaimara" name="kipaimara" class="form-select">
+                        <select id="edit_kipaimara" name="kipaimara" class="form-select" onchange="toggleKipaimara()">
                             <option value="">Chagua</option>
                             <option value="Ndiyo">Ndiyo</option>
                             <option value="Hapana">Hapana</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="container_tarehe_kipaimara_date">
                         <label for="edit_tarehe_kipaimara" class="form-label">Tarehe ya Kipaimara</label>
                         <input type="date" id="edit_tarehe_kipaimara" name="tarehe_kipaimara" class="form-input">
                     </div>
@@ -794,27 +794,86 @@
                     </div>
 
                     <!-- Section F -->
-                    <div class="form-group">
-                        <label for="edit_ahadi_jengo" class="form-label">Ahadi ya Jengo</label>
-                        <input type="number" id="edit_ahadi_jengo" name="ahadi_jengo" class="form-input">
+                    <!-- Section F: Ahadi - Fixed Jengo & Uwakili with no remove button -->
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label class="form-label" style="font-weight: 600; color: #374151; margin-bottom: 15px;">AHADI ZAKO</label>
+                        
+                        <!-- Fixed Jengo Ahadi (Non-removable) -->
+                        <div class="pledge-item" style="background: #f0f9ff; border: 1px solid #bfdbfe; margin-bottom: 10px;">
+                            <div>
+                                <label style="font-size: 12px; color: #4b5563; margin-bottom: 4px; display: block;">Jina la Ahadi</label>
+                                <input type="text" 
+                                       name="other_pledges[0][name]" 
+                                       value="Jengo"
+                                       class="form-input"
+                                       style="font-size: 14px; background: #e0f2fe; cursor: not-allowed;"
+                                       readonly>
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: #4b5563; margin-bottom: 4px; display: block;">Kiasi (TZS)</label>
+                                <input type="number" 
+                                       id="edit_ahadi_jengo_fixed"
+                                       name="other_pledges[0][amount]" 
+                                       value=""
+                                       placeholder="0"
+                                       class="form-input"
+                                       style="font-size: 14px;"
+                                       min="0"
+                                       step="1">
+                            </div>
+                        </div>
+                        
+                        <!-- Fixed Uwakili Ahadi (Non-removable) -->
+                        <div class="pledge-item" style="background: #f0f9ff; border: 1px solid #bfdbfe; margin-bottom: 10px;">
+                            <div>
+                                <label style="font-size: 12px; color: #4b5563; margin-bottom: 4px; display: block;">Jina la Ahadi</label>
+                                <input type="text" 
+                                       name="other_pledges[1][name]" 
+                                       value="Uwakili"
+                                       class="form-input"
+                                       style="font-size: 14px; background: #e0f2fe; cursor: not-allowed;"
+                                       readonly>
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: #4b5563; margin-bottom: 4px; display: block;">Kiasi (TZS)</label>
+                                <input type="number" 
+                                       id="edit_ahadi_uwakili_fixed"
+                                       name="other_pledges[1][amount]" 
+                                       value=""
+                                       placeholder="0"
+                                       class="form-input"
+                                       style="font-size: 14px;"
+                                       min="0"
+                                       step="1">
+                            </div>
+                        </div>
+                        
+                        <!-- Dynamic Other Pledges Container -->
+                        <div id="otherPledgesContainer">
+                            <!-- Dynamic pledges will be added here starting from index 2 -->
+                        </div>
+                        
+                        <button type="button" onclick="addOtherPledge()" class="btn-secondary" style="margin-top: 10px; font-size: 14px; padding: 8px 16px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
+                                <path d="M12 5v14M5 12h14"></path>
+                            </svg>
+                            Ongeza Ahadi Nyingine
+                        </button>
                     </div>
-                    <div class="form-group">
-                        <label for="edit_ahadi_uwakili" class="form-label">Ahadi ya Uwakili</label>
-                        <input type="number" id="edit_ahadi_uwakili" name="ahadi_uwakili" class="form-input">
-                    </div>
-                    <div class="form-group">
-                        <label for="edit_ahadi_nyingine" class="form-label">Ahadi Nyingine</label>
-                        <input type="number" id="edit_ahadi_nyingine" name="ahadi_nyingine" class="form-input">
-                    </div>
+
+                    <!-- Hidden old fields for backward compatibility -->
+                    <input type="hidden" id="edit_ahadi_jengo" name="ahadi_jengo" value="0">
+                    <input type="hidden" id="edit_ahadi_uwakili" name="ahadi_uwakili" value="0">
+                    <input type="hidden" id="edit_ahadi_nyingine" name="ahadi_nyingine" value="0">
                     <div class="form-group">
                         <label for="edit_namba_ahadi" class="form-label">Una Namba ya Ahadi?</label>
-                        <select id="edit_namba_ahadi" name="namba_ahadi" class="form-select">
+                        <select id="edit_namba_ahadi" name="namba_ahadi" class="form-select" onchange="toggleAhadiNumber()">
                             <option value="">Chagua</option>
                             <option value="Ndiyo">Ndiyo</option>
                             <option value="Hapana">Hapana</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="ahadiNumberContainer" style="display: none;">
                         <label for="edit_namba_ahadi_specific" class="form-label">Namba ya Ahadi</label>
                         <input type="text" id="edit_namba_ahadi_specific" name="namba_ahadi_specific" class="form-input">
                     </div>
@@ -1156,21 +1215,193 @@ function handleView(record) {
     document.getElementById('viewModal').style.display = 'flex';
 }
 
+        // Helper to ensure value is an array
+        function ensureArray(value) {
+            if (Array.isArray(value)) return value;
+            if (typeof value === 'string') {
+                try {
+                    const parsed = JSON.parse(value);
+                    if (Array.isArray(parsed)) return parsed;
+                } catch (e) {
+                    // Not valid JSON
+                }
+            }
+            return [];
+        }
+
+        function toggleKipaimara() {
+            const status = document.getElementById('edit_kipaimara').value;
+            const container = document.getElementById('container_tarehe_kipaimara_date');
+            if (container) {
+                container.style.display = status === 'Ndiyo' ? 'block' : 'none';
+                if (status !== 'Ndiyo') {
+                    const input = document.getElementById('edit_tarehe_kipaimara');
+                    if(input) input.value = '';
+                }
+            }
+        }
+
+        function toggleMarriageFields() {
+            const status = document.getElementById('edit_hali_ndoa').value;
+            const isMarried = ['Umeoa', 'Umeolewa'].includes(status);
+            
+            document.querySelectorAll('.marriage-field').forEach(field => {
+                field.style.display = isMarried ? 'block' : 'none';
+                if (!isMarried) {
+                    const inputs = field.querySelectorAll('input, select');
+                    inputs.forEach(input => input.value = '');
+                }
+            });
+        }
+
+        function toggleAhadiNumber() {
+            const status = document.getElementById('edit_namba_ahadi').value;
+            const container = document.getElementById('ahadiNumberContainer');
+            if (container) {
+                container.style.display = status === 'Ndiyo' ? 'block' : 'none';
+                if (status !== 'Ndiyo') {
+                    const input = document.getElementById('edit_namba_ahadi_specific');
+                    if(input) input.value = '';
+                }
+            }
+        }
+
+        function addOtherPledge(name = '', amount = '') {
+            const container = document.getElementById('otherPledgesContainer');
+            const index = container.children.length + 2; // +2 for fixed Jengo and Uwakili
+            
+            const div = document.createElement('div');
+            div.className = 'pledge-item';
+            div.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr 40px; gap: 10px; align-items: end; margin-bottom: 10px; background: #f9fafb; padding: 10px; border-radius: 6px; border: 1px solid #e5e7eb;';
+            
+            div.innerHTML = `
+                <div>
+                    <label style="font-size: 12px; color: #4b5563; margin-bottom: 4px; display: block;">Jina la Ahadi</label>
+                    <input type="text" 
+                           name="other_pledges[${index}][name]" 
+                           value="${name}"
+                           placeholder="Mf: Shukrani"
+                           class="form-input"
+                           style="font-size: 14px;"
+                           required>
+                </div>
+                <div>
+                    <label style="font-size: 12px; color: #4b5563; margin-bottom: 4px; display: block;">Kiasi (TZS)</label>
+                    <input type="number" 
+                           name="other_pledges[${index}][amount]" 
+                           value="${amount}"
+                           placeholder="0"
+                           class="form-input"
+                           style="font-size: 14px;"
+                           min="0"
+                           step="1">
+                </div>
+                <button type="button" onclick="removePledge(this)" style="color: #ef4444; background: #fee2e2; border: none; border-radius: 4px; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                </button>
+            `;
+            
+            container.appendChild(div);
+        }
+
+        function removePledge(button) {
+            button.closest('.pledge-item').remove();
+            reindexPledges();
+        }
+
+        function reindexPledges() {
+            const container = document.getElementById('otherPledgesContainer');
+            const items = container.querySelectorAll('.pledge-item');
+            
+            items.forEach((item, i) => {
+                const index = i + 2; // Start from 2
+                const nameInput = item.querySelector('input[name*="[name]"]');
+                const amountInput = item.querySelector('input[name*="[amount]"]');
+                
+                if (nameInput) nameInput.name = `other_pledges[${index}][name]`;
+                if (amountInput) amountInput.name = `other_pledges[${index}][amount]`;
+            });
+        }
+
         function handleEdit(record) {
-            // Fill form
+            // Fill basic fields
             const fields = [
                 'first_name', 'middle_name', 'last_name', 'jinsi', 'tarehe_kuzaliwa', 'mahali_kuzaliwa', 'hali_ndoa', 'jina_mwenzi', 'aina_ndoa', 'tarehe_ndoa',
                 'simu', 'simu_mwenzi', 'barua_pepe', 'sanduku_barua', 'mtaa', 'namba_nyumba', 'jina_eneo', 'block_no', 'jirani_jina', 'jirani_simu', 'mzee_kanisa', 'simu_mzee',
                 'kazi', 'mahali_kazi', 'elimu', 'ujuzi',
                 'batizwa', 'kipaimara', 'tarehe_kipaimara', 'meza_bwana',
                 'jumuiya', 'jina_jumuiya', 'sababu',
-                'ahadi_jengo', 'ahadi_uwakili', 'ahadi_nyingine', 'namba_ahadi', 'namba_ahadi_specific'
+                'namba_ahadi', 'namba_ahadi_specific'
             ];
 
             fields.forEach(field => {
                 const el = document.getElementById('edit_' + field);
                 if (el) el.value = record[field] || '';
             });
+
+            // Handle Checkboxes (Huduma, Kwaya, Umoja)
+            ['huduma', 'kwaya', 'umoja'].forEach(type => {
+                // Reset all checkboxes for this type
+                document.querySelectorAll(`input[name="${type}[]"]`).forEach(cb => cb.checked = false);
+                
+                // Get data and ensure it's an array
+                let data = record[type];
+                const dataArray = ensureArray(data);
+                
+                // Check matching boxes
+                dataArray.forEach(val => {
+                    const cb = document.querySelector(`input[name="${type}[]"][value="${val}"]`);
+                    if (cb) cb.checked = true;
+                });
+            });
+
+            // Handle Other Pledges (Ahadi)
+            // 1. Reset Fixed Fields
+            document.getElementById('edit_ahadi_jengo_fixed').value = '';
+            document.getElementById('edit_ahadi_uwakili_fixed').value = '';
+            
+            // 2. Clear Dynamic Container
+            const container = document.getElementById('otherPledgesContainer');
+            if (container) container.innerHTML = '';
+            
+            // 3. Parse and Populate
+            let pledges = [];
+            if (Array.isArray(record.other_pledges)) {
+                pledges = record.other_pledges;
+            } else if (typeof record.other_pledges === 'string') {
+                try {
+                    pledges = JSON.parse(record.other_pledges);
+                } catch (e) { pledges = []; }
+            }
+            
+            // Handle legacy fields if new structure is empty
+            if ((!pledges || pledges.length === 0) && (record.ahadi_jengo || record.ahadi_uwakili || record.ahadi_nyingine)) {
+                if (record.ahadi_jengo) pledges.push({ name: 'Jengo', amount: record.ahadi_jengo });
+                if (record.ahadi_uwakili) pledges.push({ name: 'Uwakili', amount: record.ahadi_uwakili });
+                if (record.ahadi_nyingine) pledges.push({ name: 'Ahadi Nyingine', amount: record.ahadi_nyingine });
+            }
+            
+            if (pledges && pledges.length > 0) {
+                pledges.forEach(p => {
+                    const name = p.name || '';
+                    const amount = p.amount || '';
+                    
+                    if (name === 'Jengo') {
+                        document.getElementById('edit_ahadi_jengo_fixed').value = amount;
+                    } else if (name === 'Uwakili') {
+                        document.getElementById('edit_ahadi_uwakili_fixed').value = amount;
+                    } else {
+                        addOtherPledge(name, amount);
+                    }
+                });
+            }
+
+            // Trigger Toggles to set initial state
+            toggleMarriageFields();
+            toggleKipaimara();
+            toggleAhadiNumber();
             
             // Store the record ID for submission
             const form = document.getElementById('editForm');
