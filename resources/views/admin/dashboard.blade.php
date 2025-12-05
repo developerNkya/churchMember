@@ -1903,10 +1903,553 @@
             }, 3000);
         }
 
-        // Keep PDF download function (unchanged as per your code)
         async function downloadPDF(record) {
-            // Your existing PDF download function here
-            // ... (keep the same PDF download code)
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Define colors
+            const primaryColor = [41, 128, 185]; // Blue
+            const secondaryColor = [52, 152, 219]; // Light Blue
+            const accentColor = [231, 76, 60]; // Red
+            const lightGray = [241, 242, 246];
+            
+            // Helper to parse JSON or return array
+            const parseJson = (data) => {
+                return ensureArray(data);
+            };
+            
+            // Helper to format date to just year
+            const getYearFromDate = (dateString) => {
+                if (!dateString) return '';
+                try {
+                    return new Date(dateString).getFullYear();
+                } catch (e) {
+                    // Fallback: extract first 4 digits
+                    const yearMatch = dateString.toString().match(/^\d{4}/);
+                    return yearMatch ? yearMatch[0] : '';
+                }
+            };
+            
+            // Helper function to extract date only (YYYY-MM-DD) from date string
+            const extractDateOnly = (dateString) => {
+                if (!dateString) return '';
+                
+                try {
+                    // Handle ISO date format (2016-04-17T00:00:00.000000Z)
+                    if (typeof dateString === 'string') {
+                        // Try to extract YYYY-MM-DD from ISO format
+                        const isoMatch = dateString.match(/^(\d{4}-\d{2}-\d{2})T/);
+                        if (isoMatch) {
+                            return isoMatch[1]; // Returns "2016-04-17"
+                        }
+                        
+                        // Try to extract YYYY-MM-DD from any format
+                        const dateMatch = dateString.match(/(\d{4}-\d{2}-\d{2})/);
+                        if (dateMatch) {
+                            return dateMatch[1]; // Returns "2016-04-17"
+                        }
+                        
+                        // Try to parse and format using Date object
+                        const date = new Date(dateString);
+                        if (!isNaN(date.getTime())) {
+                            // Format as YYYY-MM-DD
+                            const year = date.getFullYear();
+                            const month = String(date.getMonth() + 1).padStart(2, '0');
+                            const day = String(date.getDate()).padStart(2, '0');
+                            return `${year}-${month}-${day}`;
+                        }
+                    }
+                } catch (e) {
+                    console.error("Error parsing date:", e);
+                }
+                
+                // Return original if parsing fails
+                return dateString.toString();
+            };
+            
+            // Function to check and add new page if needed
+            const checkPageBreak = (requiredSpace) => {
+                if (yPos + requiredSpace > 280) { // Leave 10mm margin at bottom
+                    doc.addPage();
+                    yPos = 20;
+                    return true;
+                }
+                return false;
+            };
+            
+            // Function to add section with background
+            const addSection = (title) => {
+                checkPageBreak(15); // Check if we need new page for section
+                
+                doc.setFillColor(...primaryColor);
+                doc.roundedRect(10, yPos - 5, 190, 7, 2, 2, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(12);
+                doc.text(title, 15, yPos);
+                doc.setTextColor(0, 0, 0);
+                yPos += 10;
+            };
+            
+            // Function to add labeled text with automatic line breaks for long text
+            const addLabeledText = (label, value, indent = 0) => {
+                if (!value && value !== 0) return; // Skip if no value (but allow 0)
+                
+                checkPageBreak(6); // Check if we need new page for this line
+                
+                const xPos = 15 + indent;
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'bold');
+                doc.text(`${label}:`, xPos, yPos);
+                doc.setFont('helvetica', 'normal');
+                
+                // Format date fields to show only date part (YYYY-MM-DD)
+                let displayValue = value.toString();
+                
+                // Check if this is a date field
+                const dateFields = [
+                    'tarehe_kuzaliwa',
+                    'tarehe_ndoa',
+                    'tarehe_kipaimara',
+                    'tarehe'
+                ];
+                
+                // Extract field name from label (approximate)
+                const fieldName = label.toLowerCase().replace(/[^a-z]/g, '_');
+                
+                // If it's a date field, extract only the date part (YYYY-MM-DD)
+                if (dateFields.some(dateField => fieldName.includes(dateField) || label.toLowerCase().includes('tarehe'))) {
+                    displayValue = extractDateOnly(value);
+                }
+                
+                // Wrap long text - use smaller width for long labels
+                const maxWidth = 165 - xPos; // Reduced from 180 to prevent overflow
+                const lines = doc.splitTextToSize(displayValue, maxWidth);
+                
+                if (lines.length > 1) {
+                    // First line on same line as label
+                    doc.text(lines[0], xPos + 40, yPos);
+                    yPos += 6;
+                    
+                    // Subsequent lines indented
+                    for (let i = 1; i < lines.length; i++) {
+                        checkPageBreak(6);
+                        doc.text(lines[i], xPos + 10, yPos);
+                        yPos += 6;
+                    }
+                } else {
+                    // Single line - add spacing between label and value
+                    doc.text(displayValue, xPos + 40, yPos);
+                    yPos += 6;
+                }
+            };
+            
+            // Header with colored background
+            doc.setFillColor(...primaryColor);
+            doc.rect(0, 0, 210, 40, 'F');
+            
+            // Header text
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(255, 255, 255);
+            doc.text('K.K.K.T DAYOSISI YA MASHARIKI NA PWANI', 105, 15, { align: 'center' });
+            doc.setFontSize(12);
+            doc.text('JIMBO LA KUSINI - USHARIKA WA MJI MWEMA', 105, 23, { align: 'center' });
+            
+            let yPos = 50;
+            
+            // Photo with border - MOVED LOWER
+            if (record.photo) {
+                try {
+                    const imgData = await getBase64Image('/' + record.photo);
+                    // Add border around photo
+                    doc.setDrawColor(200, 200, 200);
+                    doc.setLineWidth(0.5);
+                    doc.roundedRect(150, 52, 45, 55, 3, 3);
+                    doc.addImage(imgData, 'JPEG', 152, 54, 41, 51);
+                } catch (e) {
+                    console.error("Could not load image", e);
+                }
+            }
+            
+            // ========== SECTION A: TARIFA BINAFSI ==========
+            addSection('A. TARIFA BINAFSI');
+            
+            // Use addLabeledText for fields that might have long values
+            const fullName =
+            `${record.first_name || ''} ${record.middle_name || ''} ${record.last_name || ''}`.trim() || 'N/A';
+
+            addLabeledText('Jina la Msharika', fullName);
+            addLabeledText('Jinsi', record.jinsi);
+            addLabeledText('Tarehe ya Kuzaliwa', record.tarehe_kuzaliwa);
+            addLabeledText('Mahali Kuzaliwa', record.mahali_kuzaliwa);
+            addLabeledText('Hali ya Ndoa', record.hali_ndoa);
+            
+            if (record.jina_mwenzi) {
+                addLabeledText('Jina la Mwenzi', record.jina_mwenzi);
+            }
+            if (record.aina_ndoa) {
+                addLabeledText('Aina ya Ndoa', record.aina_ndoa);
+            }
+            if (record.tarehe_ndoa) {
+                addLabeledText('Tarehe ya Ndoa', record.tarehe_ndoa);
+            }
+            
+            // Children Section - Clean and Simple
+            // Children Section - Clean and Simple
+            const watoto = parseJson(record.watoto);
+            
+            // Fix overlap with photo if it exists
+            if (record.photo && yPos < 110) {
+                yPos = 110;
+            }
+            
+            if (watoto.length > 0) {
+                checkPageBreak(15);
+                
+                // Section header
+                yPos += 5;
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(12);
+                doc.setTextColor(...primaryColor);
+                doc.text('WATOTO/WADEPENDANTS:', 15, yPos);
+                yPos += 8;
+                
+                // Create a mini-table
+                const colHeaders = ['SN', 'JINA', 'TAREHE', 'UHUSIANO'];
+                const colX = [20, 45, 120, 160]; // X positions for columns
+                
+                // Table header with background
+                doc.setFillColor(...primaryColor);
+                doc.rect(15, yPos - 5, 180, 7, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFont('helvetica', 'bold');
+                
+                colHeaders.forEach((header, i) => {
+                    doc.text(header, colX[i], yPos);
+                });
+                
+                yPos += 8;
+                doc.setTextColor(0, 0, 0);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(10);
+                
+                // Table rows
+                watoto.forEach((mtoto, index) => {
+                    checkPageBreak(7);
+                    
+                    // Alternate row color
+                    if (index % 2 === 0) {
+                        doc.setFillColor(...lightGray);
+                        doc.rect(15, yPos - 4, 180, 6, 'F');
+                    }
+                    
+                    // Format date if available
+                    let displayDate = mtoto.tarehe_kuzaliwa || '';
+                    if (displayDate) {
+                        displayDate = extractDateOnly(displayDate);
+                    }
+                    
+                    // Write row data
+                    doc.text(`${index + 1}.`, colX[0], yPos);
+                    doc.text(mtoto.jina || '-', colX[1], yPos);
+                    doc.text(displayDate, colX[2], yPos);
+                    doc.text(mtoto.uhusiano || '-', colX[3], yPos);
+                    
+                    yPos += 7;
+                });
+                
+                yPos += 5;
+            }
+            
+            yPos += 10;
+            
+            // ========== SECTION B: MAWASILIANO NA MAKAZI ==========
+            addSection('B. MAWASILIANO NA MAKAZI');
+            
+            // Use addLabeledText for better spacing on long values
+            addLabeledText('Simu', record.simu);
+            if (record.simu_mwenzi) {
+                addLabeledText('Simu ya Mwenzi', record.simu_mwenzi);
+            }
+            addLabeledText('Email', record.barua_pepe);
+            if (record.sanduku_barua) {
+                addLabeledText('Sanduku la Barua', record.sanduku_barua);
+            }
+            
+            yPos += 3;
+            
+            // Address information with subheading
+            checkPageBreak(10);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...primaryColor);
+            doc.text('MAKAZI:', 15, yPos);
+            yPos += 6;
+            doc.setTextColor(0, 0, 0);
+            doc.setFont('helvetica', 'normal');
+            
+            // Use addLabeledText for address fields that might be long
+            addLabeledText('Mtaa/Jumuiya', record.mtaa);
+            addLabeledText('Eneo', record.jina_eneo);
+            addLabeledText('Namba ya Nyumba', record.namba_nyumba);
+            if (record.block_no) {
+                addLabeledText('Block No', record.block_no);
+            }
+            
+            // Contact references with proper spacing
+            if (record.jirani_jina) {
+                const jiraniInfo = `${record.jirani_jina} (${record.jirani_simu || ''})`;
+                addLabeledText('Jirani', jiraniInfo);
+            }
+            if (record.mzee_kanisa) {
+                const mzeeInfo = `${record.mzee_kanisa} (${record.simu_mzee || ''})`;
+                addLabeledText('Mzee wa Kanisa', mzeeInfo);
+            }
+            
+            // Add horizontal line separator
+            checkPageBreak(5);
+            doc.setDrawColor(200, 200, 200);
+            doc.setLineWidth(0.3);
+            doc.line(15, yPos, 195, yPos);
+            yPos += 10;
+            
+            // ========== SECTION C: ELIMU NA KAZI YAKO ==========
+            addSection('C. ELIMU NA KAZI YAKO');
+            
+            addLabeledText('Kazi', record.kazi);
+            addLabeledText('Mahali pa Kazi', record.mahali_kazi);
+            addLabeledText('Elimu', record.elimu);
+            addLabeledText('Ujuzi', record.ujuzi);
+            
+            yPos += 10;
+            
+            // ========== SECTION D: HUDUMA ZA KIROHO ==========
+            addSection('D. HUDUMA ZA KIROHO');
+            
+            addLabeledText('Umebatizwa', record.batizwa);
+            
+            // Kipaimara with Mwaka on the same line
+            checkPageBreak(12); // Check space for both Kipaimara and Meza ya Bwana
+            
+            // Start Kipaimara on current line
+            doc.setFont('helvetica', 'bold');
+            doc.text('Kipaimara:', 15, yPos);
+            doc.setFont('helvetica', 'normal');
+            
+            // Handle kipaimara value (might be long)
+            const kipaimaraValue = record.kipaimara || 'N/A';
+            const kipaimaraLines = doc.splitTextToSize(kipaimaraValue, 70);
+            
+            if (kipaimaraLines.length > 1) {
+                // If kipaimara value is long (multiple lines), put Mwaka on next line
+                doc.text(kipaimaraLines[0], 45, yPos);
+                yPos += 6;
+                
+                // Add remaining kipaimara lines
+                for (let i = 1; i < kipaimaraLines.length; i++) {
+                    checkPageBreak(6);
+                    doc.text(kipaimaraLines[i], 25, yPos);
+                    yPos += 6;
+                }
+                
+                // Now add Mwaka on its own line
+                if (record.tarehe_kipaimara) {
+                    const year = getYearFromDate(record.tarehe_kipaimara);
+                    if (year) {
+                        checkPageBreak(6);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('Mwaka:', 15, yPos);
+                        doc.setFont('helvetica', 'normal');
+                        doc.text(year.toString(), 45, yPos);
+                        yPos += 6;
+                    }
+                }
+            } else {
+                // Kipaimara is short (single line) - put value and Mwaka on same line
+                doc.text(kipaimaraValue, 45, yPos);
+                
+                // Add Mwaka on the right side of the same line
+                if (record.tarehe_kipaimara) {
+                    const year = getYearFromDate(record.tarehe_kipaimara);
+                    if (year) {
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('Mwaka:', 110, yPos);
+                        doc.setFont('helvetica', 'normal');
+                        doc.text(year.toString(), 140, yPos);
+                    }
+                }
+                yPos += 6;
+            }
+            
+            // Meza ya Bwana on NEXT line
+            checkPageBreak(6); // Ensure space for Meza ya Bwana
+            doc.setFont('helvetica', 'bold');
+            doc.text('Meza ya Bwana:', 15, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(record.meza_bwana || 'N/A', 55, yPos);
+            yPos += 6;
+            
+            yPos += 3; // Extra spacing after section
+            
+            // ========== SECTION E: USHIRIKI ==========
+            addSection('E. USHIRIKI');
+            
+            const jumuiyaInfo = `${record.jumuiya || 'N/A'} (${record.jina_jumuiya || 'N/A'})`;
+            addLabeledText('Jumuiya', jumuiyaInfo);
+            
+            if (record.sababu) {
+                addLabeledText('Sababu', record.sababu);
+            }
+            
+            // Display arrays with proper formatting and page breaks
+            const displayArraySection = (title, array) => {
+                if (array.length > 0) {
+                    checkPageBreak(8);
+                    yPos += 3;
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(...primaryColor);
+                    doc.text(`${title}:`, 15, yPos);
+                    yPos += 6;
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFont('helvetica', 'normal');
+                    
+                    // Display as comma-separated with wrapping
+                    const text = array.join(', ');
+                    const lines = doc.splitTextToSize(text, 170);
+                    
+                    lines.forEach(line => {
+                        checkPageBreak(6);
+                        doc.text(line, 20, yPos);
+                        yPos += 6;
+                    });
+                }
+            };
+            
+            displayArraySection('Huduma', parseJson(record.huduma));
+            displayArraySection('Kwaya', parseJson(record.kwaya));
+            displayArraySection('Umoja', parseJson(record.umoja));
+            
+            yPos += 10;
+            
+            // ========== SECTION F: AHADI ==========
+            addSection('F. AHADI');
+            
+            // Add pledges as table
+            const otherPledges = parseJson(record.other_pledges);
+            let validPledges = [];
+            
+            // 1. Try dynamic pledges first
+            if (otherPledges.length > 0) {
+                validPledges = otherPledges.filter(p => p.name && (p.amount || p.amount === 0 || p.amount === '0'));
+            }
+            
+            // 2. If no dynamic pledges, try legacy fields
+            if (validPledges.length === 0) {
+                if (record.ahadi_jengo > 0) validPledges.push({name: 'Ahadi ya Jengo', amount: record.ahadi_jengo});
+                if (record.ahadi_uwakili > 0) validPledges.push({name: 'Ahadi ya Uwakili', amount: record.ahadi_uwakili});
+                if (record.ahadi_nyingine > 0) validPledges.push({name: 'Ahadi Nyingine', amount: record.ahadi_nyingine});
+            }
+            
+            if (validPledges.length > 0) {
+                checkPageBreak(15);
+                yPos += 5;
+                
+                // Table Header
+                const colHeaders = ['SN', 'AINA YA AHADI', 'KIASI'];
+                const colX = [20, 45, 140];
+                
+                doc.setFillColor(...primaryColor);
+                doc.rect(15, yPos - 5, 180, 7, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFont('helvetica', 'bold');
+                
+                colHeaders.forEach((header, i) => {
+                    doc.text(header, colX[i], yPos);
+                });
+                
+                yPos += 8;
+                doc.setTextColor(0, 0, 0);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(10);
+                
+                let totalAhadi = 0;
+                
+                validPledges.forEach((pledge, index) => {
+                    checkPageBreak(7);
+                    
+                    // Alternate row color
+                    if (index % 2 === 0) {
+                        doc.setFillColor(...lightGray);
+                        doc.rect(15, yPos - 4, 180, 6, 'F');
+                    }
+                    
+                    // Format amount safely
+                    const amount = Number(pledge.amount) || 0;
+                    totalAhadi += amount;
+                    
+                    doc.text(`${index + 1}.`, colX[0], yPos);
+                    doc.text(pledge.name || '-', colX[1], yPos);
+                    doc.text(`${amount.toLocaleString('en-US')} TZS`, colX[2], yPos);
+                    
+                    yPos += 7;
+                });
+                
+                // Total Row
+                yPos += 2;
+                doc.setDrawColor(...primaryColor);
+                doc.setLineWidth(0.5);
+                doc.line(15, yPos, 195, yPos);
+                yPos += 6;
+                
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(...primaryColor);
+                doc.text('JUMLA KUU:', 100, yPos);
+                doc.text(`${totalAhadi.toLocaleString('en-US')} TZS`, 140, yPos);
+                
+                yPos += 5;
+            } else {
+                doc.setFont('helvetica', 'italic');
+                doc.setTextColor(100, 100, 100);
+                doc.text('Hakuna ahadi zilizowekwa.', 20, yPos);
+                yPos += 6;
+            }
+
+            // Add extra space before Namba ya Ahadi to prevent overlap with Jumla
+            yPos += 5;
+            
+            if (record.namba_ahadi) {
+                const ahadiInfo = `${record.namba_ahadi} (${record.namba_ahadi_specific || ''})`;
+                addLabeledText('Namba ya Ahadi', ahadiInfo);
+            }
+            
+            // Add footer to all pages (WATERMARK REMOVED)
+            const totalPages = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= totalPages; i++) {
+                doc.setPage(i);
+                
+                // Footer line
+                doc.setDrawColor(200, 200, 200);
+                doc.setLineWidth(0.5);
+                doc.line(15, 280, 195, 280);
+                
+                // Page number
+                doc.setFontSize(8);
+                doc.setTextColor(150, 150, 150);
+                doc.text(`Ukurasa ${i} wa ${totalPages}`, 105, 288, { align: 'center' });
+                
+                // Generated date
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('sw-TZ');
+                const timeStr = now.toLocaleTimeString('sw-TZ', { hour: '2-digit', minute: '2-digit' });
+                doc.text(`Imetengenezwa: ${dateStr} ${timeStr}`, 15, 285);
+            }
+            
+            // Save with timestamp
+            const timestamp = new Date().toISOString().split('T')[0];
+            const filename = `${record.jina?.replace(/\s+/g, '_') || 'member'}_${record.id}_${timestamp}.pdf`;
+            doc.save(filename);
+            
+            showToast('PDF imepakuliwa kwa mafanikio.', 'success');
         }
 
         // Function to get base64 image (keep as is)
