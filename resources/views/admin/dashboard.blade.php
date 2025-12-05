@@ -799,7 +799,7 @@
                         <label class="form-label" style="font-weight: 600; color: #374151; margin-bottom: 15px;">AHADI ZAKO</label>
                         
                         <!-- Fixed Jengo Ahadi (Non-removable) -->
-                        <div class="pledge-item" style="background: #f0f9ff; border: 1px solid #bfdbfe; margin-bottom: 10px;">
+                        <div class="pledge-item" style="display: grid; grid-template-columns: 1fr 1fr 40px; gap: 10px; align-items: end; margin-bottom: 10px; background: #f0f9ff; padding: 10px; border-radius: 6px; border: 1px solid #bfdbfe;">
                             <div>
                                 <label style="font-size: 12px; color: #4b5563; margin-bottom: 4px; display: block;">Jina la Ahadi</label>
                                 <input type="text" 
@@ -821,10 +821,12 @@
                                        min="0"
                                        step="1">
                             </div>
+                            <!-- Empty div for alignment with remove button column -->
+                            <div></div>
                         </div>
                         
                         <!-- Fixed Uwakili Ahadi (Non-removable) -->
-                        <div class="pledge-item" style="background: #f0f9ff; border: 1px solid #bfdbfe; margin-bottom: 10px;">
+                        <div class="pledge-item" style="display: grid; grid-template-columns: 1fr 1fr 40px; gap: 10px; align-items: end; margin-bottom: 10px; background: #f0f9ff; padding: 10px; border-radius: 6px; border: 1px solid #bfdbfe;">
                             <div>
                                 <label style="font-size: 12px; color: #4b5563; margin-bottom: 4px; display: block;">Jina la Ahadi</label>
                                 <input type="text" 
@@ -846,6 +848,8 @@
                                        min="0"
                                        step="1">
                             </div>
+                            <!-- Empty div for alignment with remove button column -->
+                            <div></div>
                         </div>
                         
                         <!-- Dynamic Other Pledges Container -->
@@ -1419,7 +1423,8 @@ function handleView(record) {
                 body: formData,
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'X-HTTP-Method-Override': 'PUT'
+                    'X-HTTP-Method-Override': 'PUT',
+                    'Accept': 'application/json'
                 }
             })
             .then(response => response.json())
@@ -1891,11 +1896,14 @@ async function downloadPDF(record) {
     
     // Function to add amounts with proper formatting
     const addAmount = (label, value) => {
+        // Skip if value is 0, "0", null, undefined, or empty string
+        if (!value || value == 0 || value === '0') return;
+        
         checkPageBreak(6);
         doc.setFont('helvetica', 'bold');
         doc.text(`${label}:`, 15, yPos);
         doc.setFont('helvetica', 'normal');
-        doc.text(`${value || '0'}`, 60, yPos);
+        doc.text(`${Number(value).toLocaleString('en-US')} TZS`, 60, yPos);
         yPos += 6;
     };
     
