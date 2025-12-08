@@ -452,12 +452,12 @@
                 </button>
             </form>
 
-            <div class="demo-info">
+            <!-- <div class="demo-info">
                 <p>
                     <strong>Demo:</strong> Username: <code class="demo-code">admin</code>, Password: 
                     <code class="demo-code">admin123</code>
                 </p>
-            </div>
+            </div> -->
         </div>
     </div>
 
