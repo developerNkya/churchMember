@@ -1321,13 +1321,12 @@
                                    ${isDefault ? 'readonly style="background-color: #f3f4f6;"' : ''}>
                         </td>
                         <td>
-                            <input type="number" 
+                            <input type="text" 
                                    class="pledge-amount" 
                                    data-pledge-id="${pledge.id}"
-                                   value="${pledge.amount}"
+                                   value="${pledge.amount ? Number(pledge.amount).toLocaleString('en-US') : ''}"
                                    placeholder="Kiasi"
-                                   min="0"
-                                   step="1000">
+                                   inputmode="numeric">
                         </td>
                         <td>
                             ${!isDefault ? `
@@ -1348,7 +1347,18 @@
                     }
                     
                     row.querySelector('.pledge-amount').addEventListener('input', (e) => {
-                        this.updatePledge(pledge.id, 'amount', e.target.value);
+                        // Remove commas and non-numeric chars
+                        let rawValue = e.target.value.replace(/[^0-9]/g, '');
+                        
+                        // Format for display
+                        if (rawValue) {
+                            e.target.value = Number(rawValue).toLocaleString('en-US');
+                        } else {
+                            e.target.value = '';
+                        }
+                        
+                        // Store raw number
+                        this.updatePledge(pledge.id, 'amount', rawValue);
                     });
                     
                     // Add event listener for remove button
