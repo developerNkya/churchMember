@@ -269,6 +269,7 @@
             position: sticky;
             right: 0;
             background: white;
+            z-index: 5;
         }
 
         .actions-container {
@@ -277,9 +278,59 @@
             justify-content: flex-end;
         }
 
-        @media (max-width: 480px) {
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: #6b7280;
+            padding: 4px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .mobile-menu-btn:hover {
+            background-color: #f3f4f6;
+        }
+
+        @media (max-width: 640px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
             .actions-container {
+                display: none;
+                position: absolute;
+                right: 40px; /* Position to the left of the kebab icon */
+                top: 50%;
+                transform: translateY(-50%);
+                background: white;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                padding: 4px;
+                z-index: 50;
+                flex-direction: row; /* Keep horizontal but in a popup */
                 gap: 4px;
+            }
+
+            .actions-container.show {
+                display: flex;
+            }
+            
+            /* Overlay to close menu when clicking outside */
+            .menu-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 40;
+                background: transparent;
+            }
+            
+            .menu-overlay.show {
+                display: block;
             }
         }
 
@@ -861,6 +912,13 @@
                             <td class="hidden-mobile" data-label="Kazi">{{ $member->kazi }}</td>
                             <td class="hidden-mobile" data-label="Tarehe">{{ $member->created_at->format('d/m/Y') }}</td>
                             <td class="actions-cell" data-label="Vitendo">
+                                <button class="mobile-menu-btn" onclick="toggleActions(this, event)" aria-label="Orodha ya vitendo">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="1"></circle>
+                                        <circle cx="12" cy="5" r="1"></circle>
+                                        <circle cx="12" cy="19" r="1"></circle>
+                                    </svg>
+                                </button>
                                 <div class="actions-container">
                                     <button class="action-btn" onclick="handleView(@js($member))" title="Angalia" aria-label="Angalia taarifa za msharika">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -908,6 +966,9 @@
             @endif
         </div>
     </main>
+
+    <!-- Overlay for mobile menu -->
+    <div class="menu-overlay" onclick="closeAllDropdowns()"></div>
 
     <!-- View Modal -->
     <div id="viewModal" class="modal-overlay">
@@ -1543,6 +1604,47 @@
             `;
             
             showModal('viewModal');
+        }
+
+        let activeDropdown = null;
+
+        function toggleActions(btn, event) {
+            event.stopPropagation();
+            const container = btn.nextElementSibling;
+            const overlay = document.querySelector('.menu-overlay');
+            const parentTd = btn.closest('td');
+            
+            // Close others if open
+            if (activeDropdown && activeDropdown !== container) {
+                activeDropdown.classList.remove('show');
+                const prevTd = activeDropdown.closest('td');
+                if (prevTd) prevTd.style.zIndex = '';
+            }
+            
+            if (container.classList.contains('show')) {
+                container.classList.remove('show');
+                if (parentTd) parentTd.style.zIndex = '';
+                if (overlay) overlay.classList.remove('show');
+                activeDropdown = null;
+            } else {
+                container.classList.add('show');
+                if (parentTd) parentTd.style.zIndex = '50';
+                if (overlay) overlay.classList.add('show');
+                activeDropdown = container;
+            }
+        }
+
+        function closeAllDropdowns() {
+            const overlay = document.querySelector('.menu-overlay');
+            if (activeDropdown) {
+                activeDropdown.classList.remove('show');
+                const prevTd = activeDropdown.closest('td');
+                if (prevTd) prevTd.style.zIndex = '';
+                activeDropdown = null;
+            }
+            if (overlay) {
+                overlay.classList.remove('show');
+            }
         }
 
         // Helper to ensure value is an array
