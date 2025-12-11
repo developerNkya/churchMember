@@ -36,7 +36,10 @@ class AdminController extends Controller
             return redirect()->route('admin.login')->with('error', 'Tafadhali ingia kwanza.');
         }
 
-        $query = Member::latest();
+        $status = $request->get('status', 'active');
+        $query = Member::where('status', $status)->latest();
+        
+        $totalMembers = Member::where('status', 'active')->count();
 
         if ($request->has('search')) {
             $search = $request->get('search');
@@ -53,7 +56,7 @@ class AdminController extends Controller
 
         $members = $query->paginate(10);
 
-        return view('admin.dashboard', compact('members'));
+        return view('admin.dashboard', compact('members', 'totalMembers', 'status'));
     }
 
     public function logout()
@@ -139,5 +142,28 @@ class AdminController extends Controller
 
         Member::destroy($id);
         return response()->json(['success' => true, 'message' => 'Rekodi imefutwa.']);
+    }
+    public function archive($id)
+    {
+        if (!session()->has('admin_logged_in')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $member = Member::findOrFail($id);
+        $member->update(['status' => 'archived']);
+        
+        return response()->json(['success' => true, 'message' => 'Mwanachama amehamishwa kwenye kumbukumbu (archived).']);
+    }
+
+    public function restore($id)
+    {
+        if (!session()->has('admin_logged_in')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $member = Member::findOrFail($id);
+        $member->update(['status' => 'active']);
+        
+        return response()->json(['success' => true, 'message' => 'Mwanachama amerudishwa.']);
     }
 }

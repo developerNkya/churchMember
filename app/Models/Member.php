@@ -17,7 +17,7 @@ class Member extends Model
         'simu_mzee', 'kazi', 'mahali_kazi', 'elimu', 'ujuzi', 'batizwa',
         'kipaimara', 'tarehe_kipaimara', 'meza_bwana', 'jumuiya', 'jina_jumuiya',
         'sababu', 'huduma', 'kwaya', 'umoja', 'ahadi_jengo', 'ahadi_uwakili',
-        'ahadi_nyingine', 'other_pledges', 'namba_ahadi', 'namba_ahadi_specific', 'photo'
+        'ahadi_nyingine', 'other_pledges', 'namba_ahadi', 'namba_ahadi_specific', 'photo', 'status'
     ];
 
     protected $casts = [

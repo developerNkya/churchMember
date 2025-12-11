@@ -27,4 +27,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/logout', [AdminController::class, 'logout'])->name('logout');
     Route::put('/member/{id}', [AdminController::class, 'update'])->name('update');
     Route::delete('/member/{id}', [AdminController::class, 'destroy'])->name('destroy');
+    Route::post('/member/{id}/archive', [AdminController::class, 'archive'])->name('archive');
+    Route::post('/member/{id}/restore', [AdminController::class, 'restore'])->name('restore');
 });

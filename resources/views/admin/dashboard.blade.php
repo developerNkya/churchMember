@@ -98,6 +98,57 @@
             width: 100%;
         }
 
+        .stats-card {
+            background: white;
+            border-radius: 8px;
+            padding: 12px 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .stats-icon {
+            width: 40px;
+            height: 40px;
+            background: #eff6ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3b82f6;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 2px;
+        }
+
+        .filter-tab {
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+            cursor: pointer;
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -3px;
+        }
+
+        .filter-tab.active {
+            color: #4f46e5;
+            border-bottom-color: #4f46e5;
+        }
+
+        .filter-tab:hover {
+            color: #374151;
+        }
+
         @media (min-width: 768px) {
             .search-container {
                 flex-direction: row;
@@ -859,9 +910,35 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <!-- Search and Actions -->
+        <!-- Stats -->
+        <div class="stats-card">
+            <div class="stats-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+            </div>
+            <div>
+                <div style="font-size: 13px; color: #6b7280;">Jumla ya Washirika (Hai)</div>
+                <div style="font-size: 20px; font-weight: 700; color: #111827;">{{ $totalMembers }}</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-tabs">
+            <a href="{{ route('admin.dashboard', ['status' => 'active']) }}" class="filter-tab {{ $status == 'active' ? 'active' : '' }}">
+                Wanachama Hai
+            </a>
+            <a href="{{ route('admin.dashboard', ['status' => 'archived']) }}" class="filter-tab {{ $status == 'archived' ? 'active' : '' }}">
+                Kumbukumbu (Archived)
+            </a>
+        </div>
+
         <div class="search-section">
             <form action="{{ route('admin.dashboard') }}" method="GET" class="search-container">
+                <input type="hidden" name="status" value="{{ $status }}">
                 <div class="search-box">
                     <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="11" cy="11" r="8"></circle>
@@ -872,15 +949,18 @@
                         name="search"
                         value="{{ request('search') }}"
                         class="search-input"
-                        placeholder="Tafuta kwa jina, simu, mtaa..."
+                        placeholder="Tafuta kwa jina, simu au kanda..."
                         aria-label="Tafuta washarika"
                     >
                 </div>
                 <div class="actions-row">
                     <button type="submit" class="btn-primary">Tafuta</button>
                     @if(request('search'))
-                        <a href="{{ route('admin.dashboard') }}" class="btn-secondary">Ondoa</a>
+                        <a href="{{ route('admin.dashboard', ['status' => $status]) }}" class="btn-secondary">Ondoa</a>
                     @endif
+                    <a href="{{ route('member.register') }}" class="btn-primary" style="background-color: #10b981;">
+                        Sajili Mpya
+                    </a>
                 </div>
             </form>
         </div>
@@ -926,26 +1006,48 @@
                                             <circle cx="12" cy="12" r="3"></circle>
                                         </svg>
                                     </button>
-                                    <button class="action-btn" onclick="handleEdit(@js($member))" title="Hariri" aria-label="Hariri taarifa za msharika">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                        </svg>
-                                    </button>
-                                    <button class="action-btn" onclick="downloadPDF(@js($member))" title="Pakua PDF" aria-label="Pakua PDF ya msharika">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                            <polyline points="7 10 12 15 17 10"></polyline>
-                                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                                        </svg>
-                                    </button>
-                                    <button class="action-btn delete" onclick="handleDelete({{ $member->id }})" title="Futa" aria-label="Futa msharika">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M3 6h18"></path>
-                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
-                                            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                        </svg>
-                                    </button>
+                                            @if($status == 'active')
+                                                <button onclick="handleEdit({{ json_encode($member) }})" class="action-btn" title="Badilisha taarifa">
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                                    </svg>
+                                                </button>
+                                                <button onclick="downloadPDF({{ json_encode($member) }})" class="action-btn" title="Pakua PDF">
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                                                    </svg>
+                                                </button>
+                                                <button onclick="archiveMember({{ $member->id }})" class="action-btn monitor" style="color: #d97706; border-color: #fcd34d;" title="Hifadhi Kumbukumbu (Archive)">
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                                                        <rect x="1" y="3" width="22" height="5"></rect>
+                                                        <line x1="10" y1="12" x2="14" y2="12"></line>
+                                                    </svg>
+                                                </button>
+                                                <button onclick="handleDelete({{ $member->id }})" class="action-btn delete" title="Futa">
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                                    </svg>
+                                                </button>
+                                            @else
+                                                <button onclick="restoreMember({{ $member->id }})" class="action-btn" style="color: #10b981; border-color: #6ee7b7;" title="Rudisha (Restore)">
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <polyline points="1 4 1 10 7 10"></polyline>
+                                                        <polyline points="23 20 23 14 17 14"></polyline>
+                                                        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+                                                    </svg>
+                                                </button>
+                                                <button onclick="handleDelete({{ $member->id }})" class="action-btn delete" title="Futa">
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                                    </svg>
+                                                </button>
+                                            @endif
                                 </div>
                             </td>
                         </tr>
@@ -1161,17 +1263,17 @@
                     <!-- Section E -->
                     <div class="form-group">
                         <label for="edit_jumuiya" class="form-label">Unashiriki Jumuiya?</label>
-                        <select id="edit_jumuiya" name="jumuiya" class="form-select">
+                        <select id="edit_jumuiya" name="jumuiya" class="form-select" onchange="toggleJumuiya()">
                             <option value="">Chagua</option>
                             <option value="Ndiyo">Ndiyo</option>
                             <option value="Hapana">Hapana</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="container_jina_jumuiya" style="display: none;">
                         <label for="edit_jina_jumuiya" class="form-label">Jina la Jumuiya</label>
                         <input type="text" id="edit_jina_jumuiya" name="jina_jumuiya" class="form-input">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="container_sababu_jumuiya" style="display: none;">
                         <label for="edit_sababu" class="form-label">Sababu (kama huna jumuiya)</label>
                         <input type="text" id="edit_sababu" name="sababu" class="form-input">
                     </div>
@@ -1698,6 +1800,28 @@
             }
         }
 
+        function toggleJumuiya() {
+            const status = document.getElementById('edit_jumuiya').value;
+            const containerName = document.getElementById('container_jina_jumuiya');
+            const containerReason = document.getElementById('container_sababu_jumuiya');
+            
+            if (containerName) {
+                containerName.style.display = status === 'Ndiyo' ? 'block' : 'none';
+                if (status !== 'Ndiyo') {
+                    const input = document.getElementById('edit_jina_jumuiya');
+                    if(input) input.value = '';
+                }
+            }
+            
+            if (containerReason) {
+                containerReason.style.display = status === 'Hapana' ? 'block' : 'none';
+                if (status !== 'Hapana') {
+                    const input = document.getElementById('edit_sababu');
+                    if(input) input.value = '';
+                }
+            }
+        }
+
         function addOtherPledge(name = '', amount = '') {
             const container = document.getElementById('otherPledgesContainer');
             const index = container.children.length + 2; // +2 for fixed Jengo and Uwakili
@@ -1773,7 +1897,21 @@
 
             fields.forEach(field => {
                 const el = document.getElementById('edit_' + field);
-                if (el) el.value = record[field] || '';
+                if (el) {
+                    let value = record[field] || '';
+                    // Fix DOB and other date fields reset issue
+                    if (['tarehe_kuzaliwa', 'tarehe_ndoa', 'tarehe_kipaimara'].includes(field) && value) {
+                        try {
+                            const dateObj = new Date(value);
+                            if (!isNaN(dateObj.getTime())) {
+                                value = dateObj.toISOString().split('T')[0];
+                            }
+                        } catch (e) {
+                            console.error('Date parsing error', e);
+                        }
+                    }
+                    el.value = value;
+                }
             });
 
             // Handle Checkboxes (Huduma, Kwaya, Umoja)
@@ -1837,6 +1975,7 @@
             toggleMarriageFields();
             toggleKipaimara();
             toggleAhadiNumber();
+            toggleJumuiya();
             
             // Store the record ID for submission
             const form = document.getElementById('editForm');
@@ -1898,8 +2037,60 @@
             }
         }
 
+        async function archiveMember(id) {
+            if (!confirm('Je, una uhakika unataka kumhamisha mwanachama huyu kwenye kumbukumbu?')) return;
+            
+            try {
+                const response = await fetch(`/admin/member/${id}/archive`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast('Hitilafu imetokea.', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Hitilafu ya mtandao.', 'error');
+            }
+        }
+
+        async function restoreMember(id) {
+            if (!confirm('Je, una uhakika unataka kumrudisha mwanachama huyu?')) return;
+            
+            try {
+                const response = await fetch(`/admin/member/${id}/restore`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast('Hitilafu imetokea.', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Hitilafu ya mtandao.', 'error');
+            }
+        }
+
         async function handleDelete(id) {
-            if (!confirm('Je, una uhakika unataka kufuta rekodi hii?')) return;
+            if (!confirm('Je, una uhakika unataka kufuta rekodi hii moja kwa moja?')) return;
             
             try {
                 const response = await fetch(`/admin/member/${id}`, {
