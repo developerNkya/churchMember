@@ -1410,6 +1410,7 @@
         // Modal state management
         let currentModal = null;
         let isSubmitting = false;
+        let currentEditingId = null;
 
         // Modal and Action Handlers
         function handleView(record) {
@@ -2017,8 +2018,7 @@
                 });
             }
 
-            });
-            }
+
 
             // Handle Radio Buttons for Namba Ahadi
             if (record.namba_ahadi === 'Ndiyo') {
