@@ -126,7 +126,8 @@ class AdminController extends Controller
             'ahadi_nyingine' => 'nullable|numeric|min:0',
             'other_pledges' => 'nullable|array',
             'namba_ahadi' => 'nullable|in:Ndiyo,Hapana',
-            'namba_ahadi_specific' => 'nullable|string|max:100',
+            'namba_ahadi' => 'nullable|in:Ndiyo,Hapana',
+            'namba_ahadi_specific' => 'nullable|string|max:100|unique:members,namba_ahadi_specific,' . $id,
         ]);
 
         $member->update($validated);

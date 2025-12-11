@@ -17,6 +17,7 @@ Route::prefix('member')->name('member.')->group(function () {
     Route::get('/register', [MemberController::class, 'create'])->name('register');
     Route::post('/register', [MemberController::class, 'store'])->name('store');
     Route::get('/success', [MemberController::class, 'success'])->name('success');
+    Route::get('/check-pledge', [MemberController::class, 'checkPledgeNumber'])->name('check_pledge');
 });
 
 // Admin routes

@@ -1032,28 +1032,28 @@
                 </div>
                 
                 
-                <div class="form-group">
+                <div class="form-group" style="margin-top: 20px;">
                     <label>4. Je una Namba ya Ahadi?</label>
-                    <div class="inline-group">
-                        <div class="radio-group" style="display: flex; flex-wrap: wrap;">
-                            <div class="radio-item">
-                                <input type="radio" id="namba_ahadi_ndiyo" name="namba_ahadi" value="Ndiyo" {{ old('namba_ahadi') == 'Ndiyo' ? 'checked' : '' }}>
-                                <label for="namba_ahadi_ndiyo">Ndiyo</label>
-                            </div>
-                            <div class="radio-item">
-                                <input type="radio" id="namba_ahadi_hapana" name="namba_ahadi" value="Hapana" {{ old('namba_ahadi') == 'Hapana' ? 'checked' : '' }}>
-                                <label for="namba_ahadi_hapana">Hapana</label>
-                            </div>
+                    <div class="radio-group" style="display: flex; gap: 20px;">
+                        <div class="radio-item">
+                            <input type="radio" id="namba_ahadi_ndiyo" name="namba_ahadi" value="Ndiyo" {{ old('namba_ahadi') == 'Ndiyo' ? 'checked' : '' }}>
+                            <label for="namba_ahadi_ndiyo">Ndiyo</label>
                         </div>
-                        <div class="form-group conditional-field" id="nambaAhadiGroup">
-                            <label for="namba_ahadi_specific">Namba ya ahadi kama unayo</label>
-                            <input type="text" id="namba_ahadi_specific" name="namba_ahadi_specific" value="{{ old('namba_ahadi_specific') }}">
-                            @error('namba_ahadi_specific')
-                                <div class="error-message">{{ $message }}</div>
-                            @enderror
+                        <div class="radio-item">
+                            <input type="radio" id="namba_ahadi_hapana" name="namba_ahadi" value="Hapana" {{ old('namba_ahadi') != 'Ndiyo' ? 'checked' : '' }}>
+                            <label for="namba_ahadi_hapana">Hapana</label>
                         </div>
                     </div>
                     @error('namba_ahadi')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="form-group conditional-field" id="nambaAhadiGroup">
+                    <label for="namba_ahadi_specific">Namba ya ahadi kama unayo</label>
+                    <input type="text" id="namba_ahadi_specific" name="namba_ahadi_specific" value="{{ old('namba_ahadi_specific') }}" onblur="checkPledgeUnique(this.value)">
+                    <span id="pledge-error" class="error-message" style="display: none;"></span>
+                    @error('namba_ahadi_specific')
                         <div class="error-message">{{ $message }}</div>
                     @enderror
                 </div>
@@ -1645,6 +1645,37 @@
                 });
             }
         });
+
+        async function checkPledgeUnique(number) {
+            if (!number) {
+                 document.getElementById('pledge-error').style.display = 'none';
+                 document.getElementById('namba_ahadi_specific').classList.remove('error');
+                 document.getElementById('submitBtn').disabled = false;
+                 return;
+            }
+            
+            const errorSpan = document.getElementById('pledge-error');
+            const submitBtn = document.getElementById('submitBtn');
+            const input = document.getElementById('namba_ahadi_specific');
+            
+            try {
+                const response = await fetch(`/check-pledge?number=${number}`);
+                const data = await response.json();
+                
+                if (data.exists) {
+                    errorSpan.textContent = "Namba hii imetumika tayari kwa mshirika mwingine";
+                    errorSpan.style.display = 'block';
+                    input.classList.add('error');
+                    submitBtn.disabled = true;
+                } else {
+                    errorSpan.style.display = 'none';
+                    input.classList.remove('error');
+                    submitBtn.disabled = false;
+                }
+            } catch (e) {
+                console.error('Error checking pledge', e);
+            }
+        }
     </script>
 </body>
 </html>

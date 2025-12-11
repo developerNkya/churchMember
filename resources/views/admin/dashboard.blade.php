@@ -1355,17 +1355,23 @@
                     <input type="hidden" id="edit_ahadi_jengo" name="ahadi_jengo" value="0">
                     <input type="hidden" id="edit_ahadi_uwakili" name="ahadi_uwakili" value="0">
                     <input type="hidden" id="edit_ahadi_nyingine" name="ahadi_nyingine" value="0">
-                    <div class="form-group">
-                        <label for="edit_namba_ahadi" class="form-label">Una Namba ya Ahadi?</label>
-                        <select id="edit_namba_ahadi" name="namba_ahadi" class="form-select" onchange="toggleAhadiNumber()">
-                            <option value="">Chagua</option>
-                            <option value="Ndiyo">Ndiyo</option>
-                            <option value="Hapana">Hapana</option>
-                        </select>
+                    <div class="form-group" style="grid-column: 1 / -1; margin-top: 10px;">
+                        <label class="form-label">Una Namba ya Ahadi?</label>
+                        <div style="display: flex; gap: 20px;">
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="radio" id="edit_namba_ahadi_ndiyo" name="namba_ahadi" value="Ndiyo" onclick="toggleAhadiNumber()">
+                                Ndiyo
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="radio" id="edit_namba_ahadi_hapana" name="namba_ahadi" value="Hapana" onclick="toggleAhadiNumber()">
+                                Hapana
+                            </label>
+                        </div>
                     </div>
-                    <div class="form-group" id="ahadiNumberContainer" style="display: none;">
+                    <div class="form-group" id="ahadiNumberContainer" style="grid-column: 1 / -1; display: none;">
                         <label for="edit_namba_ahadi_specific" class="form-label">Namba ya Ahadi</label>
-                        <input type="text" id="edit_namba_ahadi_specific" name="namba_ahadi_specific" class="form-input">
+                        <input type="text" id="edit_namba_ahadi_specific" name="namba_ahadi_specific" class="form-input" onblur="checkPledgeUnique(this.value)">
+                        <span id="edit-pledge-error" style="color: #ef4444; font-size: 13px; display: none; margin-top: 5px;"></span>
                     </div>
                 </form>
             </div>
@@ -1789,14 +1795,51 @@
         }
 
         function toggleAhadiNumber() {
-            const status = document.getElementById('edit_namba_ahadi').value;
+            const isNdiyo = document.getElementById('edit_namba_ahadi_ndiyo').checked;
             const container = document.getElementById('ahadiNumberContainer');
             if (container) {
-                container.style.display = status === 'Ndiyo' ? 'block' : 'none';
-                if (status !== 'Ndiyo') {
+                container.style.display = isNdiyo ? 'block' : 'none';
+                if (!isNdiyo) {
                     const input = document.getElementById('edit_namba_ahadi_specific');
-                    if(input) input.value = '';
+                    if(input) {
+                        input.value = '';
+                        input.classList.remove('error');
+                    }
+                    document.getElementById('edit-pledge-error').style.display = 'none';
+                    document.getElementById('saveEdit').disabled = false;
                 }
+            }
+        }
+
+        async function checkPledgeUnique(number) {
+            if (!number || !currentEditingId) {
+                 document.getElementById('edit-pledge-error').style.display = 'none';
+                 document.getElementById('edit_namba_ahadi_specific').classList.remove('error');
+                 document.getElementById('saveEdit').disabled = false;
+                 return;
+            }
+            
+            const errorSpan = document.getElementById('edit-pledge-error');
+            const submitBtn = document.getElementById('saveEdit');
+            const input = document.getElementById('edit_namba_ahadi_specific');
+            
+            try {
+                // Pass currentEditingId to exclude it from the check
+                const response = await fetch(`/check-pledge?number=${number}&exclude_id=${currentEditingId}`);
+                const data = await response.json();
+                
+                if (data.exists) {
+                    errorSpan.textContent = "Namba hii imetumika tayari kwa mshirika mwingine";
+                    errorSpan.style.display = 'block';
+                    input.classList.add('error');
+                    submitBtn.disabled = true;
+                } else {
+                    errorSpan.style.display = 'none';
+                    input.classList.remove('error');
+                    submitBtn.disabled = false;
+                }
+            } catch (e) {
+                console.error('Error checking pledge', e);
             }
         }
 
@@ -1885,6 +1928,9 @@
         function handleEdit(record) {
             if (isSubmitting) return;
             
+            // Set current editing ID for validation exclusions
+            currentEditingId = record.id;
+            
             // Fill basic fields
             const fields = [
                 'first_name', 'middle_name', 'last_name', 'jinsi', 'tarehe_kuzaliwa', 'mahali_kuzaliwa', 'hali_ndoa', 'jina_mwenzi', 'aina_ndoa', 'tarehe_ndoa',
@@ -1969,6 +2015,16 @@
                         addOtherPledge(name, amount);
                     }
                 });
+            }
+
+            });
+            }
+
+            // Handle Radio Buttons for Namba Ahadi
+            if (record.namba_ahadi === 'Ndiyo') {
+                document.getElementById('edit_namba_ahadi_ndiyo').checked = true;
+            } else {
+                document.getElementById('edit_namba_ahadi_hapana').checked = true;
             }
 
             // Trigger Toggles to set initial state

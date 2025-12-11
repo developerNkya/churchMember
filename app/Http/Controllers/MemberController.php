@@ -27,7 +27,16 @@ class MemberController extends Controller
         $exists = Member::where('first_name', $request->first_name)
             ->where('last_name', $request->last_name)
             ->where('simu', $request->simu)
+            ->where('simu', $request->simu)
             ->exists();
+        
+        // Also check if pledge number exists if provided (and namba_ahadi is Yes)
+        if (!$exists && $request->namba_ahadi === 'Ndiyo' && $request->namba_ahadi_specific) {
+            $pledgeExists = Member::where('namba_ahadi_specific', $request->namba_ahadi_specific)->exists();
+            if ($pledgeExists) {
+                return back()->withErrors(['namba_ahadi_specific' => 'Namba hii ya ahadi tayari imesajiliwa kwa mshirika mwingine.'])->withInput();
+            }
+        }
 
         if ($exists) {
             return back()->withErrors(['error' => 'Mwanachama huyu tayari amesajiliwa.'])->withInput();
@@ -93,7 +102,8 @@ class MemberController extends Controller
             'ahadi_nyingine' => 'nullable|numeric|min:0',
             'other_pledges' => 'nullable|json',
             'namba_ahadi' => 'nullable|in:Ndiyo,Hapana',
-            'namba_ahadi_specific' => 'nullable|string|max:100',
+            'namba_ahadi' => 'nullable|in:Ndiyo,Hapana',
+            'namba_ahadi_specific' => 'nullable|string|max:100|unique:members,namba_ahadi_specific',
             
             // Photo
             'photo' => 'nullable|image|max:2048',
@@ -187,5 +197,28 @@ class MemberController extends Controller
             return redirect()->route('home');
         }
         return view('members.success');
+    }
+
+
+    /**
+     * Check if pledge number exists
+     */
+    public function checkPledgeNumber(Request $request)
+    {
+        $number = $request->query('number');
+        $excludeId = $request->query('exclude_id');
+        
+        if (!$number) {
+            return response()->json(['exists' => false]);
+        }
+
+        $query = Member::where('namba_ahadi_specific', $number);
+        
+        if ($excludeId) {
+            $query->where('id', '!=', $excludeId);
+        }
+
+        $exists = $query->exists();
+        return response()->json(['exists' => $exists]);
     }
 }
