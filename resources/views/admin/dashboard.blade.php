@@ -1183,7 +1183,16 @@
                     </div>
                     <div class="form-group">
                         <label for="edit_mtaa" class="form-label">Mtaa/Jumuiya</label>
-                        <input type="text" id="edit_mtaa" name="mtaa" class="form-input" required>
+                        <select id="edit_mtaa" name="mtaa" class="form-select" required>
+                            <option value="">Chagua</option>
+                            <option value="Sina Jumuiya">Sina Jumuiya</option>
+                            <option value="Samaria">Samaria</option>
+                            <option value="Yerusalemu">Yerusalemu</option>
+                            <option value="Bahari ya Shamu">Bahari ya Shamu</option>
+                            <option value="Betheli">Betheli</option>
+                            <option value="Nazareti">Nazareti</option>
+                            <option value="Sayuni">Sayuni</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="edit_namba_nyumba" class="form-label">Namba ya Nyumba</label>

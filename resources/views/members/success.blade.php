@@ -242,7 +242,7 @@
         <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
             <p style="color: #64748b; font-size: 0.9rem;">
                 Kwa msaudi zaidi, wasiliana nasi kupitia:<br>
-                Simu: +255 XXX XXX XXX | Barua pepe: info@dayosisi.go.tz
+                Barua pepe: utawala@kkktmjimwema.co.tz
             </p>
         </div>
     </div>

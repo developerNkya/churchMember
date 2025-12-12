@@ -64,7 +64,7 @@ class MemberController extends Controller
             'simu_mwenzi' => 'nullable|string|max:20',
             'sanduku_barua' => 'nullable|string|max:255',
             'barua_pepe' => 'nullable|email|max:255',
-            'mtaa' => 'required|string|max:255',
+            'mtaa' => 'required|string|max:255|not_in:Chagua',
             'namba_nyumba' => 'nullable|string|max:50',
             'jina_eneo' => 'required|string|max:255',
             'block_no' => 'nullable|string|max:50',

@@ -712,7 +712,16 @@
                 <div class="inline-group">
                     <div class="form-group">
                         <label for="mtaa" class="required">5. Mtaa/Jumuiya</label>
-                        <input type="text" id="mtaa" name="mtaa" value="{{ old('mtaa') }}" required>
+                        <select id="mtaa" name="mtaa" required>
+                            <option value="">Chagua</option>
+                            <option value="Sina Jumuiya" {{ old('mtaa') == 'Sina Jumuiya' ? 'selected' : '' }}>Sina Jumuiya</option>
+                            <option value="Samaria" {{ old('mtaa') == 'Samaria' ? 'selected' : '' }}>Samaria</option>
+                            <option value="Yerusalemu" {{ old('mtaa') == 'Yerusalemu' ? 'selected' : '' }}>Yerusalemu</option>
+                            <option value="Bahari ya Shamu" {{ old('mtaa') == 'Bahari ya Shamu' ? 'selected' : '' }}>Bahari ya Shamu</option>
+                            <option value="Betheli" {{ old('mtaa') == 'Betheli' ? 'selected' : '' }}>Betheli</option>
+                            <option value="Nazareti" {{ old('mtaa') == 'Nazareti' ? 'selected' : '' }}>Nazareti</option>
+                            <option value="Sayuni" {{ old('mtaa') == 'Sayuni' ? 'selected' : '' }}>Sayuni</option>
+                        </select>
                         @error('mtaa')
                             <div class="error-message">{{ $message }}</div>
                         @enderror
@@ -1677,5 +1686,8 @@
             }
         }
     </script>
+    <div style="text-align: center; margin-top: 30px; padding: 20px; color: #666; font-size: 14px;">
+        <p>Kwa msaada? <a href="mailto:utawala@kkktmjimwema.co.tz" style="color: #3498db; text-decoration: none;">utawala@kkktmjimwema.co.tz</a></p>
+    </div>
 </body>
 </html>
